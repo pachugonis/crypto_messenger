@@ -1,0 +1,359 @@
+ru:
+  # ActiveRecord
+  activerecord:
+    models:
+      user: "Пользователь"
+      room: "Комната"
+      message: "Сообщение"
+      folder: "Папка"
+      attachment: "Вложение"
+    attributes:
+      user:
+        email: "Email"
+        username: "Имя пользователя"
+        password: "Пароль"
+        password_confirmation: "Подтверждение пароля"
+        role: "Роль"
+        created_at: "Дата регистрации"
+      room:
+        name: "Название"
+        description: "Описание"
+        room_type: "Тип"
+        visibility: "Видимость"
+      message:
+        content: "Содержимое"
+      folder:
+        name: "Название"
+      attachment:
+        file: "Файл"
+    errors:
+      models:
+        user:
+          attributes:
+            email:
+              blank: "не может быть пустым"
+              taken: "уже занят"
+              invalid: "имеет неверный формат"
+            username:
+              blank: "не может быть пустым"
+              taken: "уже занят"
+              too_short: "слишком короткое (минимум %{count} символов)"
+              invalid_username_format: "может содержать только латинские буквы (a-z), цифры (0-9) и символ подчеркивания (_)"
+            password:
+              blank: "не может быть пустым"
+              too_short: "слишком короткий (минимум %{count} символов)"
+
+  # Date/Time formats
+  date:
+    formats:
+      default: "%d.%m.%Y"
+      short: "%d %b"
+      long: "%d %B %Y"
+    day_names:
+      - воскресенье
+      - понедельник
+      - вторник
+      - среда
+      - четверг
+      - пятница
+      - суббота
+    abbr_day_names:
+      - Вс
+      - Пн
+      - Вт
+      - Ср
+      - Чт
+      - Пт
+      - Сб
+    month_names:
+      - ~
+      - января
+      - февраля
+      - марта
+      - апреля
+      - мая
+      - июня
+      - июля
+      - августа
+      - сентября
+      - октября
+      - ноября
+      - декабря
+    abbr_month_names:
+      - ~
+      - янв.
+      - февр.
+      - марта
+      - апр.
+      - мая
+      - июня
+      - июля
+      - авг.
+      - сент.
+      - окт.
+      - нояб.
+      - дек.
+
+  time:
+    formats:
+      default: "%d.%m.%Y %H:%M"
+      short: "%H:%M"
+      long: "%d %B %Y, %H:%M"
+      message: "%H:%M"
+      message_date: "%d %B"
+
+  # Helpers
+  helpers:
+    submit:
+      create: "Создать"
+      update: "Обновить"
+      submit: "Сохранить"
+    label:
+      search: "Поиск"
+
+  # Errors
+  errors:
+    format: "%{attribute} %{message}"
+    messages:
+      blank: "не может быть пустым"
+      invalid: "имеет неверное значение"
+      taken: "уже занято"
+      too_short: "слишком короткое (минимум %{count} символов)"
+      too_long: "слишком длинное (максимум %{count} символов)"
+
+  # Application strings
+  app:
+    name: "Crypto Messenger"
+    tagline: "Защищённый мессенджер"
+
+  # Navigation
+  nav:
+    home: "Главная"
+    chats: "Чаты"
+    groups: "Группы"
+    channels: "Каналы"
+    folders: "Папки"
+    settings: "Настройки"
+    admin: "Администрирование"
+    logout: "Выйти"
+    login: "Войти"
+    register: "Регистрация"
+
+  # Authentication
+  auth:
+    login:
+      title: "Вход"
+      submit: "Войти"
+      no_account: "Нет аккаунта?"
+      register_link: "Зарегистрироваться"
+      username_placeholder: "Введите логин"
+      forgot_password: "Забыли пароль?"
+    register:
+      title: "Регистрация"
+      submit: "Создать аккаунт"
+      have_account: "Уже есть аккаунт?"
+      login_link: "Войти"
+      username_placeholder: "Придумайте логин"
+      username_help: "Используйте только буквы a-z, цифры и подчеркивание"
+      username_invalid: "Логин может содержать только латинские буквы (a-z), цифры (0-9) и символ подчеркивания (_)"
+      username_too_short: "Логин слишком короткий (минимум 3 символа)"
+    recovery:
+      title: "Сохраните код восстановления"
+      subtitle: "Вы увидите его только один раз!"
+      warning_title: "Важно!"
+      warning_text: "Сохраните этот код в надежном месте. Он понадобится для восстановления доступа к аккаунту, если вы забудете пароль."
+      code_label: "Код восстановления"
+      instruction_1: "Скопируйте код или запишите его на бумаге"
+      instruction_2: "Храните код в безопасном месте, недоступном для посторонних"
+      instruction_3: "После смены пароля будет сгенерирован новый код"
+      confirm_saved: "Я сохранил(а) код восстановления в надежном месте"
+      copied: "Код скопирован!"
+      reset_title: "Восстановление доступа"
+      code_help: "Введите код, который вы получили при регистрации"
+      verify_button: "Проверить код"
+      back_to_login: "Вернуться ко входу"
+      invalid: "Неверный логин или код восстановления"
+      invalid_link: "Ссылка недействительна или истекла"
+      new_password_title: "Создайте новый пароль"
+      new_password_placeholder: "Введите новый пароль"
+      confirm_password_placeholder: "Повторите новый пароль"
+      password_min_length: "Минимум 6 символов"
+      password_reset: "Пароль успешно изменен. Вот ваш новый код восстановления:"
+      passwords_no_match: "Пароли не совпадают"
+    password_reset:
+      title: "Восстановление пароля"
+      submit: "Отправить инструкции"
+      back_to_login: "Вернуться к входу"
+    messages:
+      logged_in: "Вы успешно вошли в систему"
+      logged_out: "Вы вышли из системы"
+      invalid_credentials: "Неверный логин или пароль"
+      account_created: "Аккаунт успешно создан"
+      account_locked: "Ваш аккаунт заблокирован"
+
+  # Rooms
+  rooms:
+    index:
+      title: "Мои чаты"
+      new_chat: "Новый чат"
+      new_group: "Создать группу"
+      new_channel: "Создать канал"
+      empty: "У вас пока нет чатов"
+      search_placeholder: "Поиск..."
+    show:
+      message_placeholder: "Введите сообщение..."
+      send: "Отправить"
+      participants: "Участники"
+      settings: "Настройки"
+      leave: "Покинуть"
+      delete: "Удалить"
+    new:
+      title_chat: "Новый чат"
+      title_group: "Новая группа"
+      title_channel: "Новый канал"
+    edit:
+      title: "Редактировать"
+    types:
+      personal_chat: "Личный чат"
+      group: "Группа"
+      channel: "Канал"
+    visibility:
+      public: "Публичный"
+      private: "Приватный"
+    messages:
+      created: "Чат создан"
+      updated: "Настройки сохранены"
+      deleted: "Чат удалён"
+      left: "Вы покинули чат"
+
+  # Messages
+  messages:
+    deleted: "Сообщение удалено"
+    edited: "изменено"
+    typing: "печатает..."
+    typing_many: "печатают..."
+    today: "Сегодня"
+    yesterday: "Вчера"
+    read: "Прочитано"
+    delivered: "Доставлено"
+
+  # Participants
+  participants:
+    roles:
+      owner: "Владелец"
+      admin: "Администратор"
+      member: "Участник"
+    add: "Добавить участника"
+    remove: "Удалить"
+    make_admin: "Назначить админом"
+    remove_admin: "Снять админа"
+
+  # Folders
+  folders:
+    index:
+      title: "Мои папки"
+      new: "Создать папку"
+      empty: "У вас пока нет папок"
+    show:
+      upload: "Загрузить файл"
+      share: "Поделиться"
+      empty: "Папка пуста"
+    new:
+      title: "Новая папка"
+    edit:
+      title: "Редактировать папку"
+    share:
+      title: "Поделиться папкой"
+      generate_link: "Создать ссылку"
+      link_copied: "Ссылка скопирована"
+      expires_in: "Ссылка действительна"
+      hours: "часов"
+      days: "дней"
+    messages:
+      created: "Папка создана"
+      updated: "Папка обновлена"
+      deleted: "Папка удалена"
+
+  # Attachments
+  attachments:
+    upload: "Загрузить"
+    download: "Скачать"
+    delete: "Удалить"
+    invalid_token: "Недействительная или просроченная ссылка"
+    messages:
+      uploaded: "Файл загружен"
+      deleted: "Файл удалён"
+
+  # Admin panel
+  admin:
+    dashboard:
+      title: "Панель управления"
+      total_users: "Всего пользователей"
+      total_rooms: "Всего чатов"
+      total_messages: "Всего сообщений"
+      active_users: "Активных за неделю"
+      storage_used: "Использовано хранилища"
+    users:
+      title: "Пользователи"
+      search: "Поиск пользователей..."
+      role: "Роль"
+      status: "Статус"
+      actions: "Действия"
+      make_admin: "Сделать админом"
+      remove_admin: "Снять админа"
+      lock: "Заблокировать"
+      unlock: "Разблокировать"
+      delete: "Удалить"
+      confirm_delete: "Вы уверены, что хотите удалить этого пользователя?"
+    rooms:
+      title: "Чаты"
+      type: "Тип"
+      participants: "Участников"
+      messages: "Сообщений"
+      created: "Создан"
+      delete: "Удалить"
+      confirm_delete: "Вы уверены, что хотите удалить этот чат?"
+    roles:
+      user: "Пользователь"
+      admin: "Администратор"
+
+  # Settings
+  settings:
+    title: "Настройки"
+    profile:
+      title: "Профиль"
+      change_avatar: "Изменить аватар"
+      change_password: "Изменить пароль"
+    appearance:
+      title: "Внешний вид"
+      theme: "Тема"
+      light: "Светлая"
+      dark: "Тёмная"
+      system: "Системная"
+    notifications:
+      title: "Уведомления"
+      sound: "Звук уведомлений"
+      desktop: "Уведомления на рабочем столе"
+    messages:
+      updated: "Настройки сохранены"
+
+  # Common
+  common:
+    save: "Сохранить"
+    cancel: "Отмена"
+    delete: "Удалить"
+    edit: "Редактировать"
+    back: "Назад"
+    close: "Закрыть"
+    search: "Поиск"
+    loading: "Загрузка..."
+    no_results: "Ничего не найдено"
+    confirm: "Подтвердить"
+    yes: "Да"
+    no: "Нет"
+    or: "или"
+    online: "В сети"
+    offline: "Не в сети"
+    last_seen: "Был(а) в сети"
+    copy: "Копировать"
+    continue: "Продолжить"

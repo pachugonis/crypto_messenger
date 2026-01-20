@@ -1,0 +1,124 @@
+<div class="p-6">
+  <div class="flex items-center gap-4 mb-6">
+    <%= link_to admin_users_path, class: "btn btn-ghost btn-icon" do %>
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
+    <% end %>
+    <h1 class="text-2xl font-bold"><%= @user.username %></h1>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- User Info -->
+    <div class="card">
+      <div class="flex flex-col items-center text-center mb-6">
+        <div class="avatar avatar-lg mb-4">
+          <%= @user.username[0].upcase %>
+        </div>
+        <h2 class="text-xl font-bold"><%= @user.username %></h2>
+        <div class="mt-2">
+          <% if @user.admin? %>
+            <span class="badge badge-primary"><%= t("admin.roles.admin") %></span>
+          <% else %>
+            <span class="badge badge-warning"><%= t("admin.roles.user") %></span>
+          <% end %>
+          <% if @user.locked? %>
+            <span class="badge badge-error ml-2">Заблокирован</span>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="space-y-3 text-sm">
+        <div class="flex justify-between">
+          <span class="text-dark-text-muted"><%= t("activerecord.attributes.user.created_at") %></span>
+          <span><%= l(@user.created_at, format: :long) %></span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-dark-text-muted">Сообщений</span>
+          <span><%= @messages_count %></span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-dark-text-muted">Чатов</span>
+          <span><%= @rooms.count %></span>
+        </div>
+      </div>
+
+      <hr class="my-4 border-dark-border">
+
+      <!-- Actions -->
+      <div class="space-y-2">
+        <% if @user.locked? %>
+          <%= button_to unlock_admin_user_path(@user), method: :post, class: "btn btn-success w-full" do %>
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"/>
+            </svg>
+            <%= t("admin.users.unlock") %>
+          <% end %>
+        <% else %>
+          <%= button_to lock_admin_user_path(@user), method: :post, class: "btn btn-warning w-full" do %>
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+            </svg>
+            <%= t("admin.users.lock") %>
+          <% end %>
+        <% end %>
+
+        <% if @user.admin? %>
+          <%= button_to remove_admin_admin_user_path(@user), method: :post, class: "btn btn-secondary w-full" do %>
+            <%= t("admin.users.remove_admin") %>
+          <% end %>
+        <% else %>
+          <%= button_to make_admin_admin_user_path(@user), method: :post, class: "btn btn-secondary w-full" do %>
+            <%= t("admin.users.make_admin") %>
+          <% end %>
+        <% end %>
+
+        <%= button_to admin_user_path(@user), method: :delete, class: "btn btn-danger w-full", data: { turbo_confirm: t("admin.users.confirm_delete") } do %>
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+          </svg>
+          <%= t("admin.users.delete") %>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- User's Rooms -->
+    <div class="lg:col-span-2">
+      <div class="card">
+        <h2 class="font-semibold mb-4">Чаты пользователя</h2>
+        <% if @rooms.any? %>
+          <div class="space-y-2">
+            <% @rooms.each do |room| %>
+              <div class="flex items-center justify-between p-3 rounded-lg hover:bg-dark-surface-hover">
+                <div class="flex items-center gap-3">
+                  <div class="avatar avatar-sm">
+                    <% if room.channel? %>
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6"/>
+                      </svg>
+                    <% else %>
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857"/>
+                      </svg>
+                    <% end %>
+                  </div>
+                  <div>
+                    <div class="font-medium"><%= room.name %></div>
+                    <div class="text-sm text-dark-text-muted"><%= t("rooms.types.#{room.room_type}") %></div>
+                  </div>
+                </div>
+                <%= link_to admin_room_path(room), class: "btn btn-sm btn-ghost" do %>
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                  </svg>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="text-dark-text-muted text-center py-4">Нет чатов</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

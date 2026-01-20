@@ -1,0 +1,37 @@
+<div class="card p-3 group relative" id="<%= dom_id(attachment) %>">
+  <% if attachment.image? %>
+    <%= image_tag attachment.file.variant(resize_to_limit: [200, 200]), class: "w-full h-24 object-cover rounded-lg mb-2" %>
+  <% else %>
+    <div class="w-full h-24 flex items-center justify-center bg-dark-surface-hover rounded-lg mb-2">
+      <svg class="w-10 h-10 text-dark-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+      </svg>
+    </div>
+  <% end %>
+  
+  <p class="text-sm font-medium truncate"><%= attachment.filename %></p>
+  <p class="text-xs text-dark-text-muted"><%= number_to_human_size(attachment.byte_size) %></p>
+  
+  <!-- Actions overlay -->
+  <div class="absolute inset-0 bg-dark-bg/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 rounded-xl">
+    <%= link_to rails_blob_path(attachment.file, disposition: "attachment"), class: "btn btn-sm btn-primary" do %>
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+      </svg>
+    <% end %>
+    
+    <button class="btn btn-sm btn-secondary" data-controller="share" data-action="click->share#generate" data-share-url-value="<%= generate_link_folder_attachment_path(attachment.attachable, attachment) %>">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
+      </svg>
+    </button>
+    
+    <%= button_to folder_attachment_path(attachment.attachable, attachment), method: :delete, class: "btn btn-sm btn-danger", data: { turbo_confirm: t("common.confirm") } do %>
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+      </svg>
+    <% end %>
+  </div>
+  
+  <div id="share_link_<%= attachment.id %>"></div>
+</div>

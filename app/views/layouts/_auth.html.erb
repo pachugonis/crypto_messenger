@@ -1,0 +1,36 @@
+<div class="min-h-screen flex items-center justify-center bg-dark-bg px-4">
+  <div class="w-full max-w-md">
+    <!-- Logo -->
+    <div class="text-center mb-8">
+      <h1 class="text-3xl font-bold text-primary mb-2"><%= t("app.name") %></h1>
+      <p class="text-dark-text-muted"><%= t("app.tagline") %></p>
+    </div>
+
+    <!-- Flash messages -->
+    <% if flash[:notice] %>
+      <div class="mb-4 p-4 rounded-lg bg-success/20 text-success border border-success/30">
+        <%= flash[:notice] %>
+      </div>
+    <% end %>
+    <% if flash[:alert] %>
+      <div class="mb-4 p-4 rounded-lg bg-error/20 text-error border border-error/30">
+        <%= flash[:alert] %>
+      </div>
+    <% end %>
+
+    <!-- Card -->
+    <div class="card">
+      <%= yield %>
+    </div>
+
+    <!-- Theme toggle -->
+    <div class="mt-6 text-center">
+      <button class="btn btn-ghost btn-sm" data-controller="theme" data-action="click->theme#toggle">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+        </svg>
+        <%= t("settings.appearance.theme") %>
+      </button>
+    </div>
+  </div>
+</div>

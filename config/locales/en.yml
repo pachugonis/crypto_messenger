@@ -1,0 +1,139 @@
+# Files in the config/locales directory are used for internationalization and
+# are automatically loaded by Rails. If you want to use locales other than
+# English, add the necessary files in this directory.
+#
+# To use the locales, use `I18n.t`:
+#
+#     I18n.t "hello"
+#
+# In views, this is aliased to just `t`:
+#
+#     <%= t("hello") %>
+#
+# To use a different locale, set it with `I18n.locale`:
+#
+#     I18n.locale = :es
+#
+# This would use the information in config/locales/es.yml.
+#
+# To learn more about the API, please read the Rails Internationalization guide
+# at https://guides.rubyonrails.org/i18n.html.
+#
+# Be aware that YAML interprets the following case-insensitive strings as
+# booleans: `true`, `false`, `on`, `off`, `yes`, `no`. Therefore, these strings
+# must be quoted to be interpreted as strings. For example:
+#
+#     en:
+#       "yes": yup
+#       enabled: "ON"
+
+en:
+  # Application strings
+  app:
+    name: "Crypto Messenger"
+    tagline: "Secure Messenger"
+
+  # Navigation
+  nav:
+    home: "Home"
+    chats: "Chats"
+    groups: "Groups"
+    channels: "Channels"
+    folders: "Folders"
+    settings: "Settings"
+    admin: "Admin"
+    logout: "Logout"
+    login: "Login"
+    register: "Register"
+
+  # Authentication
+  auth:
+    login:
+      title: "Login"
+      submit: "Sign In"
+      no_account: "Don't have an account?"
+      register_link: "Register"
+      username_placeholder: "Enter your username"
+      forgot_password: "Forgot password?"
+    register:
+      title: "Registration"
+      submit: "Create Account"
+      have_account: "Already have an account?"
+      login_link: "Sign In"
+      username_placeholder: "Choose a username"
+      username_help: "Use only letters a-z, numbers and underscores"
+      username_invalid: "Username can only contain letters (a-z), numbers (0-9) and underscores (_)"
+      username_too_short: "Username is too short (minimum 3 characters)"
+    recovery:
+      title: "Save Your Recovery Code"
+      subtitle: "You will see it only once!"
+      warning_title: "Important!"
+      warning_text: "Save this code in a safe place. You will need it to recover access to your account if you forget your password."
+      code_label: "Recovery Code"
+      instruction_1: "Copy the code or write it down on paper"
+      instruction_2: "Store the code in a secure place, inaccessible to others"
+      instruction_3: "A new code will be generated after password reset"
+      confirm_saved: "I have saved the recovery code in a safe place"
+      copied: "Code copied!"
+      reset_title: "Account Recovery"
+      code_help: "Enter the code you received during registration"
+      verify_button: "Verify Code"
+      back_to_login: "Back to Login"
+      invalid: "Invalid username or recovery code"
+      invalid_link: "Link is invalid or expired"
+      new_password_title: "Create New Password"
+      new_password_placeholder: "Enter new password"
+      confirm_password_placeholder: "Confirm new password"
+      password_min_length: "Minimum 6 characters"
+      password_reset: "Password successfully changed. Here is your new recovery code:"
+      passwords_no_match: "Passwords do not match"
+    messages:
+      logged_in: "Successfully logged in"
+      logged_out: "Successfully logged out"
+      invalid_credentials: "Invalid username or password"
+      account_created: "Account created successfully"
+      account_locked: "Your account has been locked"
+
+  # ActiveRecord
+  activerecord:
+    attributes:
+      user:
+        username: "Username"
+        password: "Password"
+        password_confirmation: "Password Confirmation"
+    errors:
+      models:
+        user:
+          attributes:
+            username:
+              invalid_username_format: "can only contain letters (a-z), numbers (0-9) and underscores (_)"
+
+  # Admin
+  admin:
+    roles:
+      user: "User"
+      admin: "Administrator"
+
+  # Common
+  common:
+    save: "Save"
+    cancel: "Cancel"
+    delete: "Delete"
+    edit: "Edit"
+    back: "Back"
+    close: "Close"
+    search: "Search"
+    loading: "Loading..."
+    confirm: "Confirm"
+    copy: "Copy"
+    continue: "Continue"
+
+  # Rooms
+  rooms:
+    index:
+      title: "My Chats"
+      new_chat: "New Chat"
+      new_group: "Create Group"
+      new_channel: "Create Channel"
+      empty: "You don't have any chats yet"
+      search_placeholder: "Search..."

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+  <head>
+    <title><%= t("admin.dashboard.title") %> - <%= t("app.name") %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="icon" href="/icon.png" type="image/png">
+
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="bg-dark-bg text-dark-text" data-controller="theme">
+    <div class="flex h-screen">
+      <!-- Admin Sidebar -->
+      <aside class="w-64 bg-dark-surface border-r border-dark-border flex flex-col">
+        <div class="p-4 border-b border-dark-border">
+          <h1 class="text-xl font-bold text-primary"><%= t("app.name") %></h1>
+          <p class="text-sm text-dark-text-muted"><%= t("admin.dashboard.title") %></p>
+        </div>
+        
+        <nav class="flex-1 p-4 space-y-1">
+          <%= link_to admin_root_path, class: "flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-dark-surface-hover #{request.path == admin_root_path ? 'bg-primary/20 text-primary' : ''}" do %>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+            </svg>
+            <%= t("admin.dashboard.title") %>
+          <% end %>
+          
+          <%= link_to admin_users_path, class: "flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-dark-surface-hover #{request.path.start_with?(admin_users_path) ? 'bg-primary/20 text-primary' : ''}" do %>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+            </svg>
+            <%= t("admin.users.title") %>
+          <% end %>
+          
+          <%= link_to admin_rooms_path, class: "flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-dark-surface-hover #{request.path.start_with?(admin_rooms_path) ? 'bg-primary/20 text-primary' : ''}" do %>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+            </svg>
+            <%= t("admin.rooms.title") %>
+          <% end %>
+          
+          <%= link_to admin_statistics_path, class: "flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-dark-surface-hover #{request.path == admin_statistics_path ? 'bg-primary/20 text-primary' : ''}" do %>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
+            Статистика
+          <% end %>
+        </nav>
+        
+        <div class="p-4 border-t border-dark-border">
+          <%= link_to root_path, class: "flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-dark-surface-hover text-dark-text-muted" do %>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z"/>
+            </svg>
+            <%= t("common.back") %>
+          <% end %>
+        </div>
+      </aside>
+
+      <!-- Main content -->
+      <main class="flex-1 overflow-y-auto">
+        <% if flash[:notice] %>
+          <div class="toast toast-success" data-controller="toast"><%= flash[:notice] %></div>
+        <% end %>
+        <% if flash[:alert] %>
+          <div class="toast toast-error" data-controller="toast"><%= flash[:alert] %></div>
+        <% end %>
+        
+        <%= yield %>
+      </main>
+    </div>
+  </body>
+</html>

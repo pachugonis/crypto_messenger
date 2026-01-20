@@ -1,0 +1,90 @@
+<h2 class="text-2xl font-bold mb-6"><%= t("auth.register.title") %></h2>
+
+<%= form_with model: @user, url: registration_path, class: "space-y-4" do |f| %>
+  <% if @user.errors.any? %>
+    <div class="p-4 rounded-lg bg-error/20 text-error border border-error/30 text-sm">
+      <ul class="list-disc list-inside space-y-1">
+        <% @user.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= f.label :username, class: "label" %>
+    <%= f.text_field :username, 
+        class: "input", 
+        required: true, 
+        autofocus: true, 
+        autocomplete: "username", 
+        placeholder: t("auth.register.username_placeholder"),
+        pattern: "[a-z0-9_]{3,30}",
+        title: t("auth.register.username_help"),
+        data: { 
+          controller: "username-validator",
+          action: "input->username-validator#validate"
+        } %>
+    <p class="text-xs text-dark-text-muted mt-1" id="username-help"><%= t("auth.register.username_help") %></p>
+    <p class="text-xs text-error mt-1 hidden" id="username-error"></p>
+  </div>
+
+  <div>
+    <%= f.label :password, class: "label" %>
+    <%= f.password_field :password, class: "input", required: true, autocomplete: "new-password", minlength: 6 %>
+  </div>
+
+  <div>
+    <%= f.label :password_confirmation, class: "label" %>
+    <%= f.password_field :password_confirmation, class: "input", required: true, autocomplete: "new-password" %>
+  </div>
+
+  <div class="pt-2">
+    <%= f.submit t("auth.register.submit"), class: "btn btn-primary w-full", id: "submit-btn" %>
+  </div>
+<% end %>
+
+<p class="mt-6 text-center text-dark-text-muted">
+  <%= t("auth.register.have_account") %>
+  <%= link_to t("auth.register.login_link"), new_session_path, class: "text-primary hover:underline" %>
+</p>
+
+<script>
+  // Username validation controller
+  (function() {
+    const usernameInput = document.querySelector('[data-controller="username-validator"]');
+    const usernameHelp = document.getElementById('username-help');
+    const usernameError = document.getElementById('username-error');
+    const submitBtn = document.getElementById('submit-btn');
+    
+    if (usernameInput) {
+      usernameInput.addEventListener('input', function(e) {
+        const value = e.target.value;
+        const regex = /^[a-z0-9_]*$/;
+        
+        // Check for invalid characters
+        if (value && !regex.test(value)) {
+          usernameError.textContent = '<%= t("auth.register.username_invalid") %>';
+          usernameError.classList.remove('hidden');
+          usernameHelp.classList.add('hidden');
+          e.target.classList.add('border-error');
+          submitBtn.disabled = true;
+          submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        } else if (value && value.length < 3) {
+          usernameError.textContent = '<%= t("auth.register.username_too_short") %>';
+          usernameError.classList.remove('hidden');
+          usernameHelp.classList.add('hidden');
+          e.target.classList.add('border-error');
+          submitBtn.disabled = true;
+          submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        } else {
+          usernameError.classList.add('hidden');
+          usernameHelp.classList.remove('hidden');
+          e.target.classList.remove('border-error');
+          submitBtn.disabled = false;
+          submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+      });
+    }
+  })();
+</script>

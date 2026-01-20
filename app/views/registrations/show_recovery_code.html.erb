@@ -1,0 +1,108 @@
+<div class="max-w-2xl mx-auto">
+  <div class="text-center mb-8">
+    <div class="inline-flex items-center justify-center w-16 h-16 bg-success/20 rounded-full mb-4">
+      <svg class="w-8 h-8 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+    </div>
+    <h2 class="text-3xl font-bold mb-2"><%= t("auth.recovery.title") %></h2>
+    <p class="text-dark-text-muted"><%= t("auth.recovery.subtitle") %></p>
+  </div>
+
+  <div class="card">
+    <div class="mb-6">
+      <div class="flex items-start gap-3 p-4 bg-warning/20 rounded-lg border border-warning/30 mb-4">
+        <svg class="w-5 h-5 text-warning flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+        </svg>
+        <div>
+          <h3 class="font-semibold mb-1"><%= t("auth.recovery.warning_title") %></h3>
+          <p class="text-sm"><%= t("auth.recovery.warning_text") %></p>
+        </div>
+      </div>
+
+      <label class="label"><%= t("auth.recovery.code_label") %></label>
+      <div class="relative">
+        <input 
+          type="text" 
+          id="recovery-code" 
+          value="<%= @recovery_code %>" 
+          readonly 
+          class="input font-mono text-xl tracking-wider text-center"
+        >
+        <button 
+          type="button"
+          onclick="copyRecoveryCode()"
+          class="absolute right-2 top-1/2 -translate-y-1/2 btn-icon btn-ghost"
+          title="<%= t('common.copy') %>"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="space-y-3 text-sm">
+      <div class="flex items-start gap-2">
+        <svg class="w-5 h-5 text-primary flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <p><%= t("auth.recovery.instruction_1") %></p>
+      </div>
+      <div class="flex items-start gap-2">
+        <svg class="w-5 h-5 text-primary flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+        </svg>
+        <p><%= t("auth.recovery.instruction_2") %></p>
+      </div>
+      <div class="flex items-start gap-2">
+        <svg class="w-5 h-5 text-primary flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+        </svg>
+        <p><%= t("auth.recovery.instruction_3") %></p>
+      </div>
+    </div>
+
+    <div class="mt-8 pt-6 border-t border-dark-border">
+      <label class="flex items-center gap-2 mb-4">
+        <input 
+          type="checkbox" 
+          id="saved-checkbox" 
+          class="w-5 h-5 rounded border-dark-border focus:ring-primary"
+          onchange="toggleContinueButton()"
+        >
+        <span class="text-sm"><%= t("auth.recovery.confirm_saved") %></span>
+      </label>
+      <%= link_to t("common.continue"), root_path, id: "continue-btn", class: "btn btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed", onclick: "return document.getElementById('saved-checkbox').checked" %>
+    </div>
+  </div>
+</div>
+
+<script>
+  function copyRecoveryCode() {
+    const input = document.getElementById('recovery-code');
+    input.select();
+    document.execCommand('copy');
+    
+    // Show toast notification
+    const toast = document.createElement('div');
+    toast.className = 'toast toast-success';
+    toast.textContent = '<%= t("auth.recovery.copied") %>';
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 3000);
+  }
+
+  function toggleContinueButton() {
+    const checkbox = document.getElementById('saved-checkbox');
+    const button = document.getElementById('continue-btn');
+    if (checkbox.checked) {
+      button.classList.remove('opacity-50', 'cursor-not-allowed');
+    } else {
+      button.classList.add('opacity-50', 'cursor-not-allowed');
+    }
+  }
+
+  // Initialize button state
+  toggleContinueButton();
+</script>

@@ -1,0 +1,69 @@
+<h2 class="text-2xl font-bold mb-6"><%= t("auth.login.title") %></h2>
+
+<% if flash[:recovery_code].present? %>
+  <div class="card mb-6">
+    <div class="flex items-start gap-3 p-4 bg-success/20 rounded-lg border border-success/30 mb-4">
+      <svg class="w-5 h-5 text-success flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+      <div class="flex-1">
+        <h3 class="font-semibold mb-1"><%= flash[:notice] %></h3>
+        <p class="text-sm mb-3"><%= t("auth.recovery.warning_text") %></p>
+        <div class="relative">
+          <input 
+            type="text" 
+            id="new-recovery-code" 
+            value="<%= flash[:recovery_code] %>" 
+            readonly 
+            class="input font-mono text-lg tracking-wider text-center"
+          >
+          <button 
+            type="button"
+            onclick="copyNewRecoveryCode()"
+            class="absolute right-2 top-1/2 -translate-y-1/2 btn-icon btn-ghost"
+            title="<%= t('common.copy') %>"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    function copyNewRecoveryCode() {
+      const input = document.getElementById('new-recovery-code');
+      input.select();
+      document.execCommand('copy');
+      
+      const toast = document.createElement('div');
+      toast.className = 'toast toast-success';
+      toast.textContent = '<%= t("auth.recovery.copied") %>';
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+  </script>
+<% end %>
+
+<%= form_with url: session_url, class: "space-y-4" do |form| %>
+  <div>
+    <%= form.label :username, t("activerecord.attributes.user.username"), class: "label" %>
+    <%= form.text_field :username, required: true, autofocus: true, autocomplete: "username", placeholder: t("auth.login.username_placeholder"), class: "input" %>
+  </div>
+
+  <div>
+    <%= form.label :password, t("activerecord.attributes.user.password"), class: "label" %>
+    <%= form.password_field :password, required: true, autocomplete: "current-password", maxlength: 72, class: "input" %>
+  </div>
+
+  <div class="flex items-center justify-between pt-2">
+    <%= form.submit t("auth.login.submit"), class: "btn btn-primary" %>
+    <%= link_to t("auth.login.forgot_password"), new_password_path, class: "text-sm text-dark-text-muted hover:text-primary" %>
+  </div>
+<% end %>
+
+<p class="mt-6 text-center text-dark-text-muted">
+  <%= t("auth.login.no_account") %>
+  <%= link_to t("auth.login.register_link"), new_registration_path, class: "text-primary hover:underline" %>
+</p>

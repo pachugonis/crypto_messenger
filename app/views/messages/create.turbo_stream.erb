@@ -1,0 +1,21 @@
+<%= turbo_stream.append "messages" do %>
+  <%= render "messages/message", message: @message %>
+<% end %>
+
+<%= turbo_stream.replace "message_form" do %>
+  <%= form_with model: [@room, Message.new], id: "message_form", data: { controller: "message-form", action: "turbo:submit-end->message-form#reset" } do |f| %>
+    <%= f.text_area :content, 
+        class: "chat-input", 
+        placeholder: t("rooms.show.message_placeholder"), 
+        rows: 1,
+        data: { 
+          message_form_target: "input",
+          action: "input->message-form#resize keydown->message-form#handleKeydown input->room#typing"
+        } %>
+    <button type="submit" class="btn btn-primary btn-icon" data-message-form-target="submit">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+      </svg>
+    </button>
+  <% end %>
+<% end %>

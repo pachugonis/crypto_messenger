@@ -1,0 +1,99 @@
+<div class="p-6">
+  <div class="flex items-center gap-4 mb-6">
+    <%= link_to admin_rooms_path, class: "btn btn-ghost btn-icon" do %>
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
+    <% end %>
+    <h1 class="text-2xl font-bold"><%= @room.name %></h1>
+    <span class="badge badge-primary"><%= t("rooms.types.#{@room.room_type}") %></span>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Room Info -->
+    <div class="card">
+      <h2 class="font-semibold mb-4">Информация</h2>
+      <div class="space-y-3 text-sm">
+        <div class="flex justify-between">
+          <span class="text-dark-text-muted">Тип</span>
+          <span><%= t("rooms.types.#{@room.room_type}") %></span>
+        </div>
+        <% if @room.channel? %>
+          <div class="flex justify-between">
+            <span class="text-dark-text-muted">Видимость</span>
+            <span><%= t("rooms.visibility.#{@room.visibility.gsub('_room', '')}") %></span>
+          </div>
+        <% end %>
+        <div class="flex justify-between">
+          <span class="text-dark-text-muted">Участников</span>
+          <span><%= @room.participants_count %></span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-dark-text-muted">Сообщений</span>
+          <span><%= @messages_count %></span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-dark-text-muted">Создан</span>
+          <span><%= l(@room.created_at, format: :long) %></span>
+        </div>
+      </div>
+
+      <% if @room.description.present? %>
+        <hr class="my-4 border-dark-border">
+        <h3 class="text-sm font-medium text-dark-text-muted mb-2">Описание</h3>
+        <p class="text-sm"><%= @room.description %></p>
+      <% end %>
+
+      <hr class="my-4 border-dark-border">
+      
+      <%= button_to admin_room_path(@room), method: :delete, class: "btn btn-danger w-full", data: { turbo_confirm: t("admin.rooms.confirm_delete") } do %>
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+        </svg>
+        <%= t("admin.rooms.delete") %>
+      <% end %>
+    </div>
+
+    <!-- Participants -->
+    <div class="lg:col-span-2">
+      <div class="card">
+        <h2 class="font-semibold mb-4">Участники</h2>
+        <div class="space-y-2">
+          <% @participants.each do |participant| %>
+            <div class="flex items-center justify-between p-3 rounded-lg hover:bg-dark-surface-hover">
+              <div class="flex items-center gap-3">
+                <div class="avatar avatar-sm">
+                  <%= participant.user.username[0].upcase %>
+                </div>
+                <div>
+                  <div class="font-medium"><%= participant.user.username %></div>
+                  <div class="text-sm text-dark-text-muted">
+                    <% if participant.user.admin? %>
+                      <%= t("admin.roles.admin") %>
+                    <% else %>
+                      <%= t("admin.roles.user") %>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <% if participant.owner? %>
+                  <span class="badge badge-primary"><%= t("participants.roles.owner") %></span>
+                <% elsif participant.admin? %>
+                  <span class="badge badge-warning"><%= t("participants.roles.admin") %></span>
+                <% else %>
+                  <span class="badge badge-secondary"><%= t("participants.roles.member") %></span>
+                <% end %>
+                <%= link_to admin_user_path(participant.user), class: "btn btn-sm btn-ghost" do %>
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                  </svg>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

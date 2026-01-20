@@ -1,0 +1,72 @@
+<div class="flex-1 flex flex-col p-6">
+  <!-- Breadcrumb -->
+  <nav class="flex items-center gap-2 text-sm mb-6">
+    <%= link_to folders_path, class: "text-dark-text-muted hover:text-primary" do %>
+      <%= t("folders.index.title") %>
+    <% end %>
+    <% @folder.ancestors.each do |ancestor| %>
+      <span class="text-dark-text-muted">/</span>
+      <%= link_to ancestor.name, folder_path(ancestor), class: "text-dark-text-muted hover:text-primary" %>
+    <% end %>
+    <span class="text-dark-text-muted">/</span>
+    <span class="font-medium"><%= @folder.name %></span>
+  </nav>
+
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-6">
+    <h1 class="text-2xl font-bold"><%= @folder.name %></h1>
+    <div class="flex gap-2">
+      <%= link_to new_folder_path(parent_id: @folder.id), class: "btn btn-secondary btn-sm", data: { turbo_frame: "modal" } do %>
+        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+        </svg>
+        <%= t("folders.index.new") %>
+      <% end %>
+      <label class="btn btn-primary btn-sm cursor-pointer">
+        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+        </svg>
+        <%= t("folders.show.upload") %>
+        <%= form_with url: folder_attachments_path(@folder), method: :post, multipart: true, data: { controller: "upload", action: "change->upload#submit" } do |f| %>
+          <%= f.file_field :file, class: "hidden", data: { upload_target: "input" } %>
+        <% end %>
+      </label>
+    </div>
+  </div>
+
+  <!-- Subfolders -->
+  <% if @subfolders.any? %>
+    <h2 class="font-semibold text-dark-text-muted mb-3"><%= t("nav.folders") %></h2>
+    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 mb-6">
+      <% @subfolders.each do |folder| %>
+        <%= link_to folder_path(folder), class: "card p-3 hover:border-primary transition-colors" do %>
+          <div class="flex items-center gap-2">
+            <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
+            </svg>
+            <span class="font-medium truncate"><%= folder.name %></span>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <!-- Files -->
+  <h2 class="font-semibold text-dark-text-muted mb-3"><%= t("attachments.upload") %></h2>
+  <div id="attachments">
+    <% if @attachments.any? %>
+      <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+        <% @attachments.each do |attachment| %>
+          <%= render "attachments/attachment", attachment: attachment %>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="text-center py-12">
+        <svg class="w-16 h-16 mx-auto text-dark-text-muted opacity-50 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+        </svg>
+        <p class="text-dark-text-muted"><%= t("folders.show.empty") %></p>
+      </div>
+    <% end %>
+  </div>
+</div>

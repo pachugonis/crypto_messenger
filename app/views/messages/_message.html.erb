@@ -1,0 +1,47 @@
+<%= turbo_frame_tag dom_id(message) do %>
+  <div class="message <%= message.user == current_user ? 'message-own' : 'message-other' %>" id="<%= dom_id(message) %>">
+    <% unless message.user == current_user %>
+      <div class="avatar avatar-sm flex-shrink-0 mt-auto">
+        <% if message.user.avatar.attached? %>
+          <%= image_tag message.user.avatar, alt: message.user.username %>
+        <% else %>
+          <%= message.user.username[0].upcase %>
+        <% end %>
+      </div>
+    <% end %>
+    
+    <div class="message-bubble group relative">
+      <% unless message.user == current_user || message.room.personal_chat? %>
+        <div class="text-xs font-medium text-primary mb-1"><%= message.user.username %></div>
+      <% end %>
+      
+      <% if message.deleted? %>
+        <p class="message-deleted"><%= t("messages.deleted") %></p>
+      <% else %>
+        <p class="whitespace-pre-wrap break-words"><%= message.content %></p>
+        
+        <div class="message-time flex items-center gap-1 justify-end">
+          <span><%= l(message.created_at, format: :message) %></span>
+          <% if message.edited? %>
+            <span class="text-xs opacity-70">(<%= t("messages.edited") %>)</span>
+          <% end %>
+          <% if message.user == current_user %>
+            <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+          <% end %>
+        </div>
+      <% end %>
+      
+      <% if message.user == current_user && !message.deleted? %>
+        <div class="absolute -left-8 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <%= button_to room_message_path(message.room, message), method: :delete, class: "btn-icon btn-ghost p-1", data: { turbo_confirm: t("common.confirm") } do %>
+            <svg class="w-4 h-4 text-error" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+            </svg>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>

@@ -1,0 +1,11 @@
+<% if rooms.any? %>
+  <div class="space-y-1 px-2">
+    <% rooms.each do |room| %>
+      <%= render "rooms/room_item", room: room %>
+    <% end %>
+  </div>
+<% else %>
+  <div class="p-4 text-center text-dark-text-muted">
+    <p><%= t("rooms.index.empty") %></p>
+  </div>
+<% end %>

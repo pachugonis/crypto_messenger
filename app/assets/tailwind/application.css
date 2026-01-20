@@ -1,0 +1,389 @@
+@import "tailwindcss";
+
+/* Custom theme configuration */
+@theme {
+  /* Colors - Messenger theme */
+  --color-primary: #6366f1;
+  --color-primary-hover: #4f46e5;
+  --color-secondary: #8b5cf6;
+  --color-accent: #06b6d4;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  
+  /* Dark theme colors */
+  --color-dark-bg: #0f172a;
+  --color-dark-surface: #1e293b;
+  --color-dark-surface-hover: #334155;
+  --color-dark-border: #334155;
+  --color-dark-text: #f1f5f9;
+  --color-dark-text-muted: #94a3b8;
+  
+  /* Light theme colors */
+  --color-light-bg: #f8fafc;
+  --color-light-surface: #ffffff;
+  --color-light-surface-hover: #f1f5f9;
+  --color-light-border: #e2e8f0;
+  --color-light-text: #1e293b;
+  --color-light-text-muted: #64748b;
+  
+  /* Message bubbles */
+  --color-message-own: #6366f1;
+  --color-message-own-text: #ffffff;
+  --color-message-other: #334155;
+  --color-message-other-text: #f1f5f9;
+  
+  /* Font */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  
+  /* Shadows */
+  --shadow-message: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Base styles */
+@layer base {
+  html {
+    font-family: var(--font-sans);
+  }
+  
+  body {
+    @apply bg-dark-bg text-dark-text min-h-screen;
+  }
+  
+  body.light {
+    @apply bg-light-bg text-light-text;
+  }
+}
+
+/* Component styles */
+@layer components {
+  /* Buttons */
+  .btn {
+    @apply inline-flex items-center justify-center px-4 py-2 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  
+  .btn-primary {
+    @apply inline-flex items-center justify-center px-4 py-2 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed bg-primary text-white hover:bg-primary-hover focus:ring-primary;
+  }
+  
+  .btn-secondary {
+    @apply inline-flex items-center justify-center px-4 py-2 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed bg-dark-surface text-dark-text hover:bg-dark-surface-hover border border-dark-border;
+  }
+  
+  .btn-ghost {
+    @apply inline-flex items-center justify-center px-4 py-2 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed bg-transparent hover:bg-dark-surface-hover;
+  }
+  
+  .btn-danger {
+    @apply inline-flex items-center justify-center px-4 py-2 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed bg-error text-white hover:bg-red-600 focus:ring-error;
+  }
+  
+  .btn-success {
+    @apply inline-flex items-center justify-center px-4 py-2 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed bg-success text-white hover:bg-green-600 focus:ring-success;
+  }
+  
+  .btn-warning {
+    @apply inline-flex items-center justify-center px-4 py-2 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed bg-warning text-white hover:bg-orange-600 focus:ring-warning;
+  }
+  
+  .btn-sm {
+    @apply px-3 py-1.5 text-sm;
+  }
+  
+  .btn-icon {
+    @apply p-2 rounded-full;
+  }
+  
+  /* Form inputs */
+  .input {
+    @apply w-full px-4 py-2.5 bg-dark-surface border border-dark-border rounded-lg text-dark-text placeholder-dark-text-muted focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200;
+  }
+  
+  .light .input {
+    @apply bg-light-surface border-light-border text-light-text placeholder-light-text-muted;
+  }
+  
+  .input-error,
+  .input.border-error {
+    @apply border-error focus:ring-error;
+  }
+  
+  .label {
+    @apply block text-sm font-medium text-dark-text-muted mb-1.5;
+  }
+  
+  .light .label {
+    @apply text-light-text-muted;
+  }
+  
+  /* Cards */
+  .card {
+    @apply bg-dark-surface border border-dark-border rounded-xl p-4;
+  }
+  
+  .light .card {
+    @apply bg-light-surface border-light-border;
+  }
+  
+  /* Sidebar */
+  .sidebar {
+    @apply w-80 bg-dark-surface border-r border-dark-border h-screen flex flex-col;
+  }
+  
+  .light .sidebar {
+    @apply bg-light-surface border-light-border;
+  }
+  
+  /* Room list item */
+  .room-item {
+    @apply flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all duration-200 hover:bg-dark-surface-hover;
+  }
+  
+  .room-item.active {
+    @apply bg-primary/20;
+  }
+  
+  .light .room-item:hover {
+    @apply bg-light-surface-hover;
+  }
+  
+  /* Avatar */
+  .avatar {
+    @apply w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white font-semibold text-lg flex-shrink-0 overflow-hidden;
+  }
+  
+  .avatar-sm {
+    @apply w-8 h-8 text-sm;
+  }
+  
+  .avatar-lg {
+    @apply w-16 h-16 text-xl;
+  }
+  
+  .avatar img {
+    @apply w-full h-full object-cover;
+  }
+  
+  /* Message bubbles */
+  .message {
+    @apply flex gap-2 mb-3;
+  }
+  
+  .message-own {
+    @apply flex-row-reverse;
+  }
+  
+  .message-bubble {
+    @apply max-w-[70%] px-4 py-2.5 rounded-2xl shadow-message;
+  }
+  
+  .message-own .message-bubble {
+    @apply bg-message-own text-message-own-text rounded-br-md;
+  }
+  
+  .message-other .message-bubble {
+    @apply bg-message-other text-message-other-text rounded-bl-md;
+  }
+  
+  .light .message-other .message-bubble {
+    @apply bg-light-border text-light-text;
+  }
+  
+  .message-time {
+    @apply text-xs opacity-70 mt-1;
+  }
+  
+  .message-deleted {
+    @apply italic opacity-50;
+  }
+  
+  /* Chat input */
+  .chat-input-container {
+    @apply flex items-end gap-2 p-4 border-t border-dark-border bg-dark-surface;
+  }
+  
+  .light .chat-input-container {
+    @apply border-light-border bg-light-surface;
+  }
+  
+  .chat-input {
+    @apply flex-1 px-4 py-3 bg-dark-bg border border-dark-border rounded-2xl resize-none max-h-32 focus:outline-none focus:ring-2 focus:ring-primary;
+  }
+  
+  .light .chat-input {
+    @apply bg-light-bg border-light-border;
+  }
+  
+  /* Badge */
+  .badge {
+    @apply inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs font-semibold rounded-full;
+  }
+  
+  .badge-primary {
+    @apply bg-primary text-white;
+  }
+  
+  .badge-success {
+    @apply bg-success text-white;
+  }
+  
+  .badge-warning {
+    @apply bg-warning text-white;
+  }
+  
+  .badge-error {
+    @apply bg-error text-white;
+  }
+  
+  /* Modal */
+  .modal-backdrop {
+    @apply fixed inset-0 bg-black/50 flex items-center justify-center z-50;
+  }
+  
+  .modal {
+    @apply bg-dark-surface border border-dark-border rounded-2xl p-6 max-w-md w-full mx-4 shadow-xl;
+  }
+  
+  .light .modal {
+    @apply bg-light-surface border-light-border;
+  }
+  
+  /* Dropdown */
+  .dropdown {
+    @apply absolute right-0 top-full mt-2 bg-dark-surface border border-dark-border rounded-xl shadow-xl py-2 min-w-[160px] z-50;
+  }
+  
+  .light .dropdown {
+    @apply bg-light-surface border-light-border;
+  }
+  
+  .dropdown-item {
+    @apply px-4 py-2 hover:bg-dark-surface-hover cursor-pointer transition-colors;
+  }
+  
+  .light .dropdown-item:hover {
+    @apply bg-light-surface-hover;
+  }
+  
+  /* Toast notifications */
+  .toast {
+    @apply fixed bottom-4 right-4 px-4 py-3 rounded-xl shadow-xl z-50;
+    animation: slide-up 0.3s ease-out;
+  }
+  
+  .toast-success {
+    @apply bg-success text-white;
+  }
+  
+  .toast-error {
+    @apply bg-error text-white;
+  }
+  
+  /* Typing indicator */
+  .typing-indicator {
+    @apply flex items-center gap-1 text-dark-text-muted text-sm px-4 py-2;
+  }
+  
+  .typing-dot {
+    @apply w-2 h-2 bg-dark-text-muted rounded-full animate-bounce;
+  }
+  
+  .typing-dot:nth-child(2) {
+    animation-delay: 0.1s;
+  }
+  
+  .typing-dot:nth-child(3) {
+    animation-delay: 0.2s;
+  }
+  
+  /* Online status */
+  .status-online {
+    @apply w-3 h-3 bg-success rounded-full border-2 border-dark-surface;
+  }
+  
+  .status-offline {
+    @apply w-3 h-3 bg-dark-text-muted rounded-full border-2 border-dark-surface;
+  }
+  
+  /* Scrollbar */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-dark-border rounded-full;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    @apply bg-dark-text-muted;
+  }
+  
+  /* File upload */
+  .file-upload {
+    @apply border-2 border-dashed border-dark-border rounded-xl p-8 text-center cursor-pointer hover:border-primary transition-colors;
+  }
+  
+  .light .file-upload {
+    @apply border-light-border hover:border-primary;
+  }
+  
+  /* Admin stats card */
+  .stat-card {
+    @apply bg-dark-surface border border-dark-border rounded-xl p-4 flex flex-col;
+  }
+  
+  .stat-value {
+    @apply text-3xl font-bold text-primary;
+  }
+  
+  .stat-label {
+    @apply text-dark-text-muted text-sm mt-1;
+  }
+  
+  /* Table */
+  .table {
+    @apply w-full;
+  }
+  
+  .table th {
+    @apply text-left text-dark-text-muted text-sm font-medium px-4 py-3 border-b border-dark-border;
+  }
+  
+  .table td {
+    @apply px-4 py-3 border-b border-dark-border;
+  }
+  
+  .light .table th,
+  .light .table td {
+    @apply border-light-border;
+  }
+  
+  .table tr:hover td {
+    @apply bg-dark-surface-hover;
+  }
+  
+  .light .table tr:hover td {
+    @apply bg-light-surface-hover;
+  }
+}
+
+/* Animations */
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Turbo loading indicator */
+.turbo-progress-bar {
+  @apply bg-primary h-1;
+}

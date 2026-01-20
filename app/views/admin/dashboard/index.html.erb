@@ -1,0 +1,122 @@
+<div class="p-6">
+  <h1 class="text-2xl font-bold mb-6"><%= t("admin.dashboard.title") %></h1>
+
+  <!-- Stats Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <div class="stat-card">
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="stat-value"><%= number_with_delimiter(@total_users) %></div>
+          <div class="stat-label"><%= t("admin.dashboard.total_users") %></div>
+        </div>
+        <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
+          <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="stat-value"><%= number_with_delimiter(@total_rooms) %></div>
+          <div class="stat-label"><%= t("admin.dashboard.total_rooms") %></div>
+        </div>
+        <div class="w-12 h-12 bg-secondary/20 rounded-full flex items-center justify-center">
+          <svg class="w-6 h-6 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="stat-value"><%= number_with_delimiter(@total_messages) %></div>
+          <div class="stat-label"><%= t("admin.dashboard.total_messages") %></div>
+        </div>
+        <div class="w-12 h-12 bg-accent/20 rounded-full flex items-center justify-center">
+          <svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="stat-value"><%= number_with_delimiter(@active_users) %></div>
+          <div class="stat-label"><%= t("admin.dashboard.active_users") %></div>
+        </div>
+        <div class="w-12 h-12 bg-success/20 rounded-full flex items-center justify-center">
+          <svg class="w-6 h-6 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Room Types -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+    <div class="card">
+      <h2 class="font-semibold mb-4">Типы чатов</h2>
+      <div class="space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="text-dark-text-muted"><%= t("rooms.types.personal_chat") %></span>
+          <span class="font-semibold"><%= @rooms_by_type[:personal_chats] %></span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-dark-text-muted"><%= t("rooms.types.group") %></span>
+          <span class="font-semibold"><%= @rooms_by_type[:groups] %></span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-dark-text-muted"><%= t("rooms.types.channel") %></span>
+          <span class="font-semibold"><%= @rooms_by_type[:channels] %></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 class="font-semibold mb-4"><%= t("admin.dashboard.storage_used") %></h2>
+      <div class="stat-value text-2xl"><%= number_to_human_size(@storage_used) %></div>
+    </div>
+  </div>
+
+  <!-- Recent Users -->
+  <div class="card">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="font-semibold">Последние пользователи</h2>
+      <%= link_to admin_users_path, class: "text-primary hover:underline text-sm" do %>
+        Все пользователи →
+      <% end %>
+    </div>
+    <div class="space-y-3">
+      <% @recent_users.each do |user| %>
+        <div class="flex items-center justify-between py-2">
+          <div class="flex items-center gap-3">
+            <div class="avatar avatar-sm">
+              <%= user.username[0].upcase %>
+            </div>
+            <div>
+              <div class="font-medium"><%= user.username %></div>
+              <div class="text-sm text-dark-text-muted">
+                <% if user.admin? %>
+                  <%= t("admin.roles.admin") %>
+                <% else %>
+                  <%= t("admin.roles.user") %>
+                <% end %>
+              </div>
+            </div>
+          </div>
+          <div class="text-sm text-dark-text-muted">
+            <%= l(user.created_at, format: :short) %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

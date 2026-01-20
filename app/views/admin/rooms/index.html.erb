@@ -1,0 +1,78 @@
+<div class="p-6">
+  <div class="flex items-center justify-between mb-6">
+    <h1 class="text-2xl font-bold"><%= t("admin.rooms.title") %></h1>
+  </div>
+
+  <!-- Filters -->
+  <div class="mb-6">
+    <%= form_with url: admin_rooms_path, method: :get, class: "flex gap-4" do |f| %>
+      <div class="flex-1">
+        <%= f.text_field :q, value: params[:q], class: "input", placeholder: "Поиск по названию..." %>
+      </div>
+      <%= f.select :type, options_for_select([
+        ["Все типы", ""],
+        [t("rooms.types.personal_chat"), "personal_chat"],
+        [t("rooms.types.group"), "group"],
+        [t("rooms.types.channel"), "channel"]
+      ], params[:type]), {}, class: "input w-40" %>
+      <%= f.submit t("common.search"), class: "btn btn-primary" %>
+    <% end %>
+  </div>
+
+  <!-- Rooms table -->
+  <div class="card overflow-hidden">
+    <table class="table">
+      <thead>
+        <tr>
+          <th><%= t("activerecord.attributes.room.name") %></th>
+          <th><%= t("admin.rooms.type") %></th>
+          <th><%= t("admin.rooms.participants") %></th>
+          <th><%= t("admin.rooms.messages") %></th>
+          <th><%= t("admin.rooms.created") %></th>
+          <th><%= t("admin.users.actions") %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @rooms.each do |room| %>
+          <tr>
+            <td>
+              <div class="flex items-center gap-3">
+                <div class="avatar avatar-sm">
+                  <% if room.channel? %>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6"/>
+                    </svg>
+                  <% else %>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857"/>
+                    </svg>
+                  <% end %>
+                </div>
+                <span class="font-medium"><%= room.name %></span>
+              </div>
+            </td>
+            <td>
+              <span class="badge badge-primary"><%= t("rooms.types.#{room.room_type}") %></span>
+            </td>
+            <td><%= room.participants_count %></td>
+            <td><%= room.messages_count %></td>
+            <td class="text-dark-text-muted"><%= l(room.created_at, format: :short) %></td>
+            <td class="flex gap-2">
+              <%= link_to admin_room_path(room), class: "btn btn-sm btn-ghost" do %>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                </svg>
+              <% end %>
+              <%= button_to admin_room_path(room), method: :delete, class: "btn btn-sm btn-ghost text-error", data: { turbo_confirm: t("admin.rooms.confirm_delete") } do %>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,72 @@
+<div class="p-6">
+  <div class="flex items-center justify-between mb-6">
+    <h1 class="text-2xl font-bold"><%= t("admin.users.title") %></h1>
+  </div>
+
+  <!-- Search -->
+  <div class="mb-6">
+    <%= form_with url: admin_users_path, method: :get, class: "flex gap-4" do |f| %>
+      <div class="flex-1">
+        <%= f.text_field :q, value: params[:q], class: "input", placeholder: t("admin.users.search") %>
+      </div>
+      <%= f.select :role, options_for_select([
+        ["Все роли", ""],
+        [t("admin.roles.user"), "user"],
+        [t("admin.roles.admin"), "admin"]
+      ], params[:role]), {}, class: "input w-40" %>
+      <%= f.submit t("common.search"), class: "btn btn-primary" %>
+    <% end %>
+  </div>
+
+  <!-- Users table -->
+  <div class="card overflow-hidden">
+    <table class="table">
+      <thead>
+        <tr>
+          <th><%= t("activerecord.attributes.user.username") %></th>
+          <th><%= t("admin.users.role") %></th>
+          <th><%= t("admin.users.status") %></th>
+          <th><%= t("activerecord.attributes.user.created_at") %></th>
+          <th><%= t("admin.users.actions") %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @users.each do |user| %>
+          <tr>
+            <td>
+              <div class="flex items-center gap-3">
+                <div class="avatar avatar-sm">
+                  <%= user.username[0].upcase %>
+                </div>
+                <span class="font-medium"><%= user.username %></span>
+              </div>
+            </td>
+            <td>
+              <% if user.admin? %>
+                <span class="badge badge-primary"><%= t("admin.roles.admin") %></span>
+              <% else %>
+                <span class="badge badge-warning"><%= t("admin.roles.user") %></span>
+              <% end %>
+            </td>
+            <td>
+              <% if user.locked? %>
+                <span class="badge badge-error">Заблокирован</span>
+              <% else %>
+                <span class="badge badge-success">Активен</span>
+              <% end %>
+            </td>
+            <td class="text-dark-text-muted"><%= l(user.created_at, format: :short) %></td>
+            <td>
+              <%= link_to admin_user_path(user), class: "btn btn-sm btn-ghost" do %>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                </svg>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
