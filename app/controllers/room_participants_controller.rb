@@ -3,8 +3,31 @@ class RoomParticipantsController < ApplicationController
   before_action :set_participant, only: [ :update, :destroy ]
   before_action :authorize_admin, only: [ :create, :update, :destroy ]
 
+  def new
+    # Show modal for adding participants
+  end
+
+  def search_users
+    @query = params[:q].to_s.strip
+    
+    if @query.present?
+      @users = User.where("username ILIKE ?", "%#{@query}%")
+                   .where.not(id: current_user.id)
+                   .limit(10)
+    else
+      @users = []
+    end
+    
+    render :search_users
+  end
+
   def create
-    user = User.find_by(username: params[:username]) || User.find_by(email_address: params[:email])
+    # Support both username and user_id parameters
+    user = if params[:user_id].present?
+             User.find(params[:user_id])
+           else
+             User.find_by(username: params[:username]) || User.find_by(email_address: params[:email])
+           end
 
     if user.nil?
       redirect_to @room, alert: t("common.no_results")

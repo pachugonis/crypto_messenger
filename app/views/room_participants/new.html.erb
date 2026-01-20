@@ -1,0 +1,45 @@
+<turbo-frame id="modal">
+  <div class="modal-backdrop" data-controller="modal" data-action="click->modal#closeBackground">
+    <div class="modal" data-modal-target="container">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-bold"><%= t("participants.add_to_room") %></h2>
+        <%= link_to new_room_path, class: "btn-icon btn-ghost", data: { turbo_frame: "modal" } do %>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        <% end %>
+      </div>
+
+      <!-- Search users -->
+      <div class="mb-4">
+        <%= form_with url: search_users_room_participants_path(@room), method: :get, 
+            data: { 
+              controller: "search", 
+              action: "input->search#submit",
+              turbo_frame: "users-search-results" 
+            } do |f| %>
+          <div class="relative">
+            <svg class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-dark-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+            <%= f.text_field :q, 
+                class: "input pl-10", 
+                placeholder: t("participants.search_placeholder"), 
+                autocomplete: "off",
+                autofocus: true %>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Search results -->
+      <turbo-frame id="users-search-results">
+        <div class="text-center py-8 text-dark-text-muted">
+          <svg class="w-12 h-12 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+          <p class="text-sm"><%= t("participants.search_hint") %></p>
+        </div>
+      </turbo-frame>
+    </div>
+  </div>
+</turbo-frame>

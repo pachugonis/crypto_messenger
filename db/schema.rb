@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_20_180255) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_20_184227) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -66,17 +66,32 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_20_180255) do
     t.index ["user_id"], name: "index_folders_on_user_id"
   end
 
+  create_table "message_reads", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "message_id", null: false
+    t.datetime "read_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["message_id", "user_id"], name: "index_message_reads_on_message_id_and_user_id", unique: true
+    t.index ["message_id"], name: "index_message_reads_on_message_id"
+    t.index ["read_at"], name: "index_message_reads_on_read_at"
+    t.index ["user_id"], name: "index_message_reads_on_user_id"
+  end
+
   create_table "messages", force: :cascade do |t|
     t.text "content"
     t.datetime "created_at", null: false
     t.datetime "deleted_at"
+    t.datetime "delivered_at"
     t.integer "message_type", default: 0, null: false
     t.bigint "room_id", null: false
+    t.integer "status", default: 0, null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.index ["deleted_at"], name: "index_messages_on_deleted_at"
     t.index ["room_id", "created_at"], name: "index_messages_on_room_id_and_created_at"
     t.index ["room_id"], name: "index_messages_on_room_id"
+    t.index ["status"], name: "index_messages_on_status"
     t.index ["user_id"], name: "index_messages_on_user_id"
   end
 
@@ -135,6 +150,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_20_180255) do
   add_foreign_key "attachments", "users"
   add_foreign_key "folders", "folders", column: "parent_folder_id"
   add_foreign_key "folders", "users"
+  add_foreign_key "message_reads", "messages"
+  add_foreign_key "message_reads", "users"
   add_foreign_key "messages", "rooms"
   add_foreign_key "messages", "users"
   add_foreign_key "room_participants", "rooms"

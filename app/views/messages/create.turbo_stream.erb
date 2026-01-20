@@ -3,7 +3,7 @@
 <% end %>
 
 <%= turbo_stream.replace "message_form" do %>
-  <%= form_with model: [@room, Message.new], id: "message_form", data: { controller: "message-form", action: "turbo:submit-end->message-form#reset" } do |f| %>
+  <%= form_with model: [@room, Message.new], id: "message_form", class: "flex items-end gap-2 w-full", data: { controller: "message-form", action: "turbo:submit-end->message-form#reset" } do |f| %>
     <%= f.text_area :content, 
         class: "chat-input", 
         placeholder: t("rooms.show.message_placeholder"), 

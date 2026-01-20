@@ -26,9 +26,7 @@
             <span class="text-xs opacity-70">(<%= t("messages.edited") %>)</span>
           <% end %>
           <% if message.user == current_user %>
-            <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-            </svg>
+            <%= render "messages/status_icon", message: message %>
           <% end %>
         </div>
       <% end %>

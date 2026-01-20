@@ -127,6 +127,25 @@ en:
     confirm: "Confirm"
     copy: "Copy"
     continue: "Continue"
+    access_denied: "Access denied"
+    user_not_found: "User not found"
+
+  # Messages
+  messages:
+    deleted: "Message deleted"
+    edited: "edited"
+    typing: "typing..."
+    typing_many: "are typing..."
+    today: "Today"
+    yesterday: "Yesterday"
+    read: "Read"
+    delivered: "Delivered"
+    status:
+      sending: "Sending"
+      sent: "Sent"
+      delivered: "Delivered"
+      read: "Read"
+      failed: "Failed to send"
 
   # Rooms
   rooms:

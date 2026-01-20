@@ -1,0 +1,29 @@
+<% case message.status %>
+<% when "sending" %>
+  <!-- Clock icon - sending -->
+  <svg class="w-4 h-4 text-dark-text-muted opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24" title="<%= t('messages.status.sending') %>">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+  </svg>
+<% when "sent" %>
+  <!-- Single checkmark - sent -->
+  <svg class="w-4 h-4 text-dark-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" title="<%= t('messages.status.sent') %>">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+  </svg>
+<% when "delivered" %>
+  <!-- Double checkmark - delivered -->
+  <svg class="w-4 h-4 text-dark-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" title="<%= t('messages.status.delivered') %>">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13l4 4L23 7" opacity="0.5"/>
+  </svg>
+<% when "read" %>
+  <!-- Double checkmark blue - read -->
+  <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" title="<%= t('messages.status.read') %>">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13l4 4L23 7"/>
+  </svg>
+<% when "failed" %>
+  <!-- Warning icon - failed -->
+  <svg class="w-4 h-4 text-error" fill="none" stroke="currentColor" viewBox="0 0 24 24" title="<%= t('messages.status.failed') %>">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+  </svg>
+<% end %>

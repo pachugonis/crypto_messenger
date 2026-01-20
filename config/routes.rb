@@ -7,7 +7,11 @@ Rails.application.routes.draw do
   # Main application
   resources :rooms do
     resources :messages, only: [ :create, :update, :destroy ]
-    resources :participants, controller: "room_participants", only: [ :create, :destroy, :update ]
+    resources :participants, controller: "room_participants", only: [ :new, :create, :destroy, :update ] do
+      collection do
+        get :search_users
+      end
+    end
     member do
       post :leave
       post :mark_read

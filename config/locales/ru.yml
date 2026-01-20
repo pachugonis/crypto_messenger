@@ -225,6 +225,7 @@ ru:
       updated: "Настройки сохранены"
       deleted: "Чат удалён"
       left: "Вы покинули чат"
+      chat_exists: "Чат с этим пользователем уже существует"
 
   # Messages
   messages:
@@ -236,6 +237,12 @@ ru:
     yesterday: "Вчера"
     read: "Прочитано"
     delivered: "Доставлено"
+    status:
+      sending: "Отправляется"
+      sent: "Отправлено"
+      delivered: "Доставлено"
+      read: "Прочитано"
+      failed: "Ошибка отправки"
 
   # Participants
   participants:
@@ -244,9 +251,17 @@ ru:
       admin: "Администратор"
       member: "Участник"
     add: "Добавить участника"
+    add_to_room: "Добавить участников"
+    add_button: "Добавить"
     remove: "Удалить"
     make_admin: "Назначить админом"
     remove_admin: "Снять админа"
+    already_member: "Уже в группе"
+    added: "Участник добавлен"
+    removed: "Участник удалён"
+    updated: "Участник обновлён"
+    search_placeholder: "Поиск пользователей..."
+    search_hint: "Начните вводить имя пользователя"
 
   # Folders
   folders:
@@ -357,3 +372,5 @@ ru:
     last_seen: "Был(а) в сети"
     copy: "Копировать"
     continue: "Продолжить"
+    access_denied: "Доступ запрещён"
+    user_not_found: "Пользователь не найден"

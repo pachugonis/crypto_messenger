@@ -1,0 +1,43 @@
+<turbo-frame id="users-search-results">
+  <% if @users.any? %>
+    <div class="space-y-2 max-h-96 overflow-y-auto custom-scrollbar">
+      <% @users.each do |user| %>
+        <div class="card p-3 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="avatar avatar-sm">
+              <% if user.avatar.attached? %>
+                <%= image_tag user.avatar, alt: user.username %>
+              <% else %>
+                <%= user.username[0].upcase %>
+              <% end %>
+            </div>
+            <div>
+              <div class="font-medium"><%= user.username %></div>
+              <% if user.email_address.present? %>
+                <div class="text-sm text-dark-text-muted"><%= user.email_address %></div>
+              <% end %>
+            </div>
+          </div>
+          
+          <% if @room.participant?(user) %>
+            <span class="badge badge-success"><%= t("participants.already_member") %></span>
+          <% else %>
+            <%= button_to room_participants_path(@room, user_id: user.id), 
+                method: :post, 
+                class: "btn btn-sm btn-primary",
+                data: { turbo_frame: "_top" } do %>
+              <%= t("participants.add_button") %>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="text-center py-8 text-dark-text-muted">
+      <svg class="w-12 h-12 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M11 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+      </svg>
+      <p class="text-sm"><%= t("common.no_results") %></p>
+    </div>
+  <% end %>
+</turbo-frame>
