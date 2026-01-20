@@ -43,8 +43,14 @@ class User < ApplicationRecord
 
   # Generate a new recovery code
   def generate_recovery_code
-    @recovery_code = SecureRandom.alphanumeric(16).upcase.scan(/.{4}/).join("-")
-    self.recovery_code_digest = BCrypt::Password.create(@recovery_code)
+    # Generate 16 alphanumeric characters
+    code_without_dashes = SecureRandom.alphanumeric(16).upcase
+    
+    # Store the code WITHOUT dashes in the digest
+    self.recovery_code_digest = BCrypt::Password.create(code_without_dashes)
+    
+    # But show the code WITH dashes to the user for readability
+    @recovery_code = code_without_dashes.scan(/.{4}/).join("-")
   end
 
   # Get the plain recovery code (only available once after generation)
@@ -55,7 +61,13 @@ class User < ApplicationRecord
   # Verify recovery code
   def valid_recovery_code?(code)
     return false if recovery_code_digest.blank?
-    BCrypt::Password.new(recovery_code_digest) == code.gsub("-", "").upcase
+    return false if code.blank?
+    
+    # Clean the input code: remove all non-alphanumeric characters and convert to uppercase
+    clean_code = code.to_s.gsub(/[^a-zA-Z0-9]/, '').upcase
+    
+    # Compare with stored digest
+    BCrypt::Password.new(recovery_code_digest) == clean_code
   end
 
   # Regenerate recovery code

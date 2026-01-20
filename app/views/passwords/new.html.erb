@@ -8,7 +8,16 @@
 
   <div>
     <%= form.label :recovery_code, t("auth.recovery.code_label"), class: "label" %>
-    <%= form.text_field :recovery_code, required: true, placeholder: "XXXX-XXXX-XXXX-XXXX", class: "input font-mono", maxlength: 19 %>
+    <%= form.text_field :recovery_code, 
+        required: true, 
+        placeholder: "XXXX-XXXX-XXXX-XXXX", 
+        class: "input font-mono", 
+        maxlength: 19,
+        id: "recovery-code-input",
+        data: { 
+          controller: "recovery-code-formatter",
+          action: "input->recovery-code-formatter#format paste->recovery-code-formatter#format"
+        } %>
     <p class="text-xs text-dark-text-muted mt-1"><%= t("auth.recovery.code_help") %></p>
   </div>
 
@@ -20,3 +29,33 @@
 <p class="mt-6 text-center text-dark-text-muted">
   <%= link_to t("auth.recovery.back_to_login"), new_session_path, class: "text-primary hover:underline" %>
 </p>
+
+<script>
+  // Recovery code formatter
+  (function() {
+    const input = document.getElementById('recovery-code-input');
+    
+    if (input) {
+      input.addEventListener('input', function(e) {
+        formatRecoveryCode(e.target);
+      });
+      
+      input.addEventListener('paste', function(e) {
+        setTimeout(() => formatRecoveryCode(e.target), 0);
+      });
+    }
+    
+    function formatRecoveryCode(element) {
+      let value = element.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+      
+      // Limit to 16 characters
+      if (value.length > 16) {
+        value = value.substring(0, 16);
+      }
+      
+      // Add dashes every 4 characters
+      let formatted = value.match(/.{1,4}/g);
+      element.value = formatted ? formatted.join('-') : '';
+    }
+  })();
+</script>

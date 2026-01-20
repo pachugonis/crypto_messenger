@@ -8,13 +8,18 @@ class PasswordsController < ApplicationController
 
   def create
     username = params[:username]&.strip&.downcase
-    recovery_code = params[:recovery_code]&.strip&.upcase
+    recovery_code = params[:recovery_code]&.strip
 
     @user = User.find_by(username: username)
     
-    if @user && @user.valid_recovery_code?(recovery_code)
+    if @user.nil?
+      Rails.logger.info "Password recovery failed: User not found with username '#{username}'"
+      redirect_to new_password_path, alert: t("auth.recovery.invalid")
+    elsif @user.valid_recovery_code?(recovery_code)
+      Rails.logger.info "Password recovery successful for user '#{username}'"
       redirect_to edit_password_path(token: encode_token(@user.id))
     else
+      Rails.logger.info "Password recovery failed: Invalid recovery code for user '#{username}'"
       redirect_to new_password_path, alert: t("auth.recovery.invalid")
     end
   end
