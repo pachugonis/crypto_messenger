@@ -4,13 +4,16 @@ class Message < ApplicationRecord
   has_many :attachments, as: :attachable, dependent: :destroy
   has_many :message_reads, dependent: :destroy
   has_many :readers, through: :message_reads, source: :user
+  has_one_attached :image
 
   encrypts :content
 
   enum :message_type, { text: 0, system: 1 }
   enum :status, { sending: 0, sent: 1, delivered: 2, read: 3, failed: 4 }
 
-  validates :content, presence: true, unless: -> { has_attachments? || deleted? }
+  validates :content, presence: true, unless: -> { has_attachments? || deleted? || image.attached? }
+  validates :image, content_type: [:png, :jpg, :jpeg, :gif, :webp],
+                   size: { less_than: 1.megabytes, message: "должно быть меньше 1 МБ" }
 
   scope :not_deleted, -> { where(deleted_at: nil) }
   scope :recent, -> { order(created_at: :desc) }
@@ -48,7 +51,8 @@ class Message < ApplicationRecord
   # Mark message as delivered
   def mark_as_delivered
     return if delivered? || read?
-    update(status: :delivered, delivered_at: Time.current)
+    update_columns(status: Message.statuses[:delivered], delivered_at: Time.current)
+    broadcast_update
   end
 
   # Check if message is read by specific user
@@ -107,6 +111,9 @@ class Message < ApplicationRecord
       message_reads.exists?(user: participant.user)
     end
     
-    update(status: :read) if all_read
+    if all_read
+      update_column(:status, Message.statuses[:read])
+      broadcast_update
+    end
   end
 end

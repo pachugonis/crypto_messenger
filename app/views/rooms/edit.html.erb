@@ -10,7 +10,7 @@
         <% end %>
       </div>
 
-      <%= form_with model: @room, class: "space-y-4" do |f| %>
+      <%= form_with model: @room, class: "space-y-4", multipart: true do |f| %>
         <% if @room.errors.any? %>
           <div class="p-4 rounded-lg bg-error/20 text-error border border-error/30 text-sm">
             <ul class="list-disc list-inside space-y-1">
@@ -20,6 +20,25 @@
             </ul>
           </div>
         <% end %>
+
+        <!-- Image Section -->
+        <div>
+          <label class="label"><%= t("rooms.image") %></label>
+          
+          <% if @room.image.attached? %>
+            <div class="flex items-start gap-4 mb-3">
+              <div class="flex-shrink-0">
+                <%= image_tag @room.image.variant(resize_to_limit: [200, 200]), class: "w-20 h-20 rounded-lg object-cover" %>
+              </div>
+              <div class="flex-1">
+                <%= link_to t("rooms.remove_image"), destroy_image_room_path(@room), method: :delete, class: "btn btn-danger btn-sm", data: { turbo_method: :delete, turbo_confirm: t("rooms.confirm_remove_image"), turbo_frame: "_top" } %>
+              </div>
+            </div>
+          <% end %>
+          
+          <%= f.file_field :image, accept: "image/*", class: "input" %>
+          <p class="text-xs text-dark-text-muted mt-1"><%= t("rooms.image_description") %></p>
+        </div>
 
         <div>
           <%= f.label :name, class: "label" %>
@@ -38,6 +57,42 @@
               [t("rooms.visibility.private"), "private_room"],
               [t("rooms.visibility.public"), "public_room"]
             ], {}, class: "input" %>
+          </div>
+        <% end %>
+
+        <% unless @room.personal_chat? %>
+          <hr class="border-dark-border">
+
+          <div>
+            <h3 class="font-semibold mb-2"><%= t("rooms.invite_link.title") %></h3>
+            <p class="text-sm text-dark-text-muted mb-3"><%= t("rooms.invite_link.description") %></p>
+            
+            <div class="flex gap-2">
+              <div class="input flex-1 bg-dark-surface-hover cursor-not-allowed" id="room-link">
+                <%= room_url(@room) %>
+              </div>
+              <button type="button" onclick="copyRoomLink(this, '<%= room_url(@room) %>')" class="btn btn-secondary btn-icon" title="<%= t('rooms.invite_link.copy') %>">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                </svg>
+              </button>
+            </div>
+            
+            <% if @room.display_handle %>
+              <div class="mt-3">
+                <p class="text-sm text-dark-text-muted mb-2"><%= t("rooms.invite_link.handle_label") %></p>
+                <div class="flex gap-2">
+                  <div class="input flex-1 bg-dark-surface-hover cursor-not-allowed font-mono" id="room-handle">
+                    <%= @room.display_handle %>
+                  </div>
+                  <button type="button" onclick="copyRoomHandle(this, '<%= @room.display_handle %>')" class="btn btn-secondary btn-icon" title="<%= t('rooms.invite_link.copy') %>">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            <% end %>
           </div>
         <% end %>
 
@@ -69,4 +124,38 @@
       <% end %>
     </div>
   </div>
+  
+  <script>
+    function copyRoomLink(button, url) {
+      const originalHtml = button.innerHTML;
+      navigator.clipboard.writeText(url).then(() => {
+        button.innerHTML = '✓';
+        button.classList.add('btn-success');
+        button.classList.remove('btn-secondary');
+        setTimeout(() => {
+          button.innerHTML = originalHtml;
+          button.classList.remove('btn-success');
+          button.classList.add('btn-secondary');
+        }, 2000);
+      }).catch(() => {
+        alert('Ошибка копирования');
+      });
+    }
+    
+    function copyRoomHandle(button, handle) {
+      const originalHtml = button.innerHTML;
+      navigator.clipboard.writeText(handle).then(() => {
+        button.innerHTML = '✓';
+        button.classList.add('btn-success');
+        button.classList.remove('btn-secondary');
+        setTimeout(() => {
+          button.innerHTML = originalHtml;
+          button.classList.remove('btn-success');
+          button.classList.add('btn-secondary');
+        }, 2000);
+      }).catch(() => {
+        alert('Ошибка копирования');
+      });
+    }
+  </script>
 </turbo-frame>

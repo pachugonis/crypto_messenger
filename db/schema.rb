@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_20_184227) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_24_173614) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -59,9 +59,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_20_184227) do
     t.datetime "created_at", null: false
     t.string "name", null: false
     t.bigint "parent_folder_id"
+    t.datetime "share_expires_at"
+    t.string "share_token"
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.index ["parent_folder_id"], name: "index_folders_on_parent_folder_id"
+    t.index ["share_token"], name: "index_folders_on_share_token"
     t.index ["user_id", "parent_folder_id", "name"], name: "index_folders_on_user_id_and_parent_folder_id_and_name", unique: true
     t.index ["user_id"], name: "index_folders_on_user_id"
   end
@@ -112,12 +115,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_20_184227) do
   create_table "rooms", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.text "description"
+    t.string "handle"
     t.integer "messages_count", default: 0
     t.string "name", null: false
     t.integer "participants_count", default: 0
     t.integer "room_type", default: 0, null: false
     t.datetime "updated_at", null: false
     t.integer "visibility", default: 0, null: false
+    t.index ["handle"], name: "index_rooms_on_handle", unique: true, where: "(handle IS NOT NULL)"
     t.index ["room_type", "visibility"], name: "index_rooms_on_room_type_and_visibility"
     t.index ["room_type"], name: "index_rooms_on_room_type"
   end
@@ -135,12 +140,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_20_184227) do
     t.datetime "created_at", null: false
     t.string "email_address"
     t.datetime "locked_at"
+    t.text "otp_backup_codes"
+    t.boolean "otp_enabled", default: false, null: false
+    t.string "otp_secret"
     t.string "password_digest", null: false
     t.string "recovery_code_digest"
     t.integer "role", default: 0, null: false
     t.datetime "updated_at", null: false
     t.string "username", null: false
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
+    t.index ["otp_secret"], name: "index_users_on_otp_secret"
     t.index ["recovery_code_digest"], name: "index_users_on_recovery_code_digest"
     t.index ["username"], name: "index_users_on_username", unique: true
   end

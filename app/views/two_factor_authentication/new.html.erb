@@ -1,0 +1,28 @@
+<%= render "layouts/auth" do %>
+  <h2 class="text-2xl font-bold mb-2 text-center"><%= t("two_factor.verify_title") %></h2>
+  <p class="text-dark-text-muted text-center mb-6"><%= t("two_factor.verify_subtitle") %></p>
+
+  <%= form_with url: two_factor_authentication_path, method: :post, class: "space-y-4" do |f| %>
+    <div>
+      <%= label_tag :otp_code, t("two_factor.code_placeholder"), class: "label" %>
+      <%= text_field_tag :otp_code, nil, 
+          class: "input text-center text-2xl tracking-widest",
+          placeholder: "000000",
+          autocomplete: "one-time-code",
+          inputmode: "numeric",
+          pattern: "[0-9]*",
+          maxlength: 6,
+          autofocus: true %>
+    </div>
+
+    <div>
+      <p class="text-sm text-dark-text-muted text-center mb-2"><%= t("two_factor.backup_code_label") %></p>
+    </div>
+
+    <%= f.submit t("two_factor.verify_button"), class: "btn btn-primary w-full" %>
+  <% end %>
+
+  <div class="mt-4 text-center">
+    <%= link_to t("auth.login.back_to_login"), new_session_path, class: "text-sm text-primary hover:underline" %>
+  </div>
+<% end %>

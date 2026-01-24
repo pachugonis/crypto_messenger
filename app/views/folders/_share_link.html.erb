@@ -1,0 +1,42 @@
+<% if token.present? %>
+  <div class="card bg-primary/10 border-primary/30">
+    <div class="flex items-start gap-3">
+      <svg class="w-5 h-5 text-primary flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+      </svg>
+      <div class="flex-1 min-w-0">
+        <h3 class="font-semibold text-dark-text mb-1"><%= t("folders.share.title") %></h3>
+        <p class="text-sm text-dark-text-muted mb-2"><%= t("folders.share.description") %></p>
+        <div class="flex gap-2">
+          <input type="text" readonly value="<%= shared_folder_url(token) %>" class="input text-sm flex-1" id="folder_share_url_<%= folder.id %>">
+          <button class="btn btn-primary btn-sm" id="copy_btn_<%= folder.id %>" onclick="copyShareLink(<%= folder.id %>)">
+            <%= t("common.copy") %>
+          </button>
+          <%= button_to revoke_share_link_folder_path(folder), method: :delete, class: "btn btn-danger btn-sm", data: { turbo_stream: true } do %>
+            <%= t("folders.share.revoke") %>
+          <% end %>
+        </div>
+        <% if folder.share_expires_at %>
+          <p class="text-xs text-dark-text-muted mt-2">
+            <%= t("folders.share.expires_at", date: l(folder.share_expires_at, format: :long)) %>
+          </p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    function copyShareLink(folderId) {
+      const input = document.getElementById('folder_share_url_' + folderId);
+      const btn = document.getElementById('copy_btn_' + folderId);
+      const originalText = btn.textContent.trim();
+      
+      navigator.clipboard.writeText(input.value).then(() => {
+        btn.textContent = '<%= t("common.copied") %>';
+        setTimeout(() => {
+          btn.textContent = originalText;
+        }, 2000);
+      });
+    }
+  </script>
+<% end %>

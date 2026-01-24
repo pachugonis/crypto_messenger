@@ -13,12 +13,16 @@ class RoomParticipantsController < ApplicationController
     if @query.present?
       @users = User.where("username ILIKE ?", "%#{@query}%")
                    .where.not(id: current_user.id)
+                   .where.not(id: @room.users.pluck(:id))
                    .limit(10)
     else
       @users = []
     end
     
-    render :search_users
+    respond_to do |format|
+      format.html { render :search_users }
+      format.turbo_stream { render :search_users }
+    end
   end
 
   def create

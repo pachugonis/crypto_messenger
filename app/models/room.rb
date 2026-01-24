@@ -2,11 +2,16 @@ class Room < ApplicationRecord
   has_many :room_participants, dependent: :destroy
   has_many :users, through: :room_participants
   has_many :messages, dependent: :destroy
+  has_one_attached :image
 
   enum :room_type, { personal_chat: 0, group: 1, channel: 2 }, prefix: :room_type
   enum :visibility, { private_room: 0, public_room: 1 }, prefix: true
 
   validates :name, presence: true, length: { maximum: 100 }
+  validates :handle, presence: true, if: -> { group? || channel? }
+  validates :handle, uniqueness: { case_sensitive: false, conditions: -> { where.not(room_type: :personal_chat) } }, if: -> { group? || channel? }
+  validates :handle, format: { with: /\A[a-z0-9_]+\z/, message: :invalid_handle_format }, if: -> { (group? || channel?) && handle.present? }
+  validates :handle, length: { minimum: 3, maximum: 50 }, if: -> { group? || channel? }
   validates :room_type, presence: true
   validates :visibility, presence: true
 
@@ -55,5 +60,9 @@ class Room < ApplicationRecord
 
   def channel?
     room_type_channel?
+  end
+  
+  def display_handle
+    handle.present? ? "@#{handle}" : nil
   end
 end

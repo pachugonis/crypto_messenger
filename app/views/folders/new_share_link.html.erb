@@ -1,0 +1,52 @@
+<turbo-frame id="modal">
+  <div class="modal-backdrop" data-controller="modal" data-action="click->modal#close">
+    <div class="modal-content" data-action="click->modal#stopPropagation">
+      <div class="modal-header">
+        <h2 class="modal-title"><%= t("folders.share.title") %></h2>
+        <button class="modal-close" data-action="click->modal#close" type="button">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <%= form_with url: generate_share_link_folder_path(@folder), method: :post, data: { turbo: true } do |f| %>
+        <div class="modal-body">
+          <p class="text-dark-text-muted mb-4"><%= t("folders.share.modal_description") %></p>
+          
+          <div class="form-group">
+            <label class="form-label"><%= t("folders.share.expires_in") %></label>
+            <div class="space-y-2">
+              <label class="flex items-center gap-2 cursor-pointer p-3 rounded-lg border border-dark-border hover:border-primary transition-colors">
+                <%= f.radio_button :expires_in, 1, class: "form-radio", checked: false %>
+                <span><%= t("folders.share.duration.one_day") %></span>
+              </label>
+              
+              <label class="flex items-center gap-2 cursor-pointer p-3 rounded-lg border border-dark-border hover:border-primary transition-colors">
+                <%= f.radio_button :expires_in, 7, class: "form-radio", checked: true %>
+                <span><%= t("folders.share.duration.one_week") %></span>
+              </label>
+              
+              <label class="flex items-center gap-2 cursor-pointer p-3 rounded-lg border border-dark-border hover:border-primary transition-colors">
+                <%= f.radio_button :expires_in, 30, class: "form-radio", checked: false %>
+                <span><%= t("folders.share.duration.one_month") %></span>
+              </label>
+              
+              <label class="flex items-center gap-2 cursor-pointer p-3 rounded-lg border border-dark-border hover:border-primary transition-colors">
+                <%= f.radio_button :expires_in, 365, class: "form-radio", checked: false %>
+                <span><%= t("folders.share.duration.one_year") %></span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-action="click->modal#close">
+            <%= t("common.cancel") %>
+          </button>
+          <%= f.submit t("folders.share.generate"), class: "btn btn-primary", type: "submit" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</turbo-frame>

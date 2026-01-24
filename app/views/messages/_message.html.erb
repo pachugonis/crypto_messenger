@@ -18,7 +18,17 @@
       <% if message.deleted? %>
         <p class="message-deleted"><%= t("messages.deleted") %></p>
       <% else %>
-        <p class="whitespace-pre-wrap break-words"><%= message.content %></p>
+        <% if message.image.attached? %>
+          <div class="mb-2">
+            <%= link_to rails_blob_path(message.image, disposition: "attachment"), target: "_blank", class: "block" do %>
+              <%= image_tag message.image.variant(resize_to_limit: [400, 400]), class: "rounded-lg max-w-full h-auto" %>
+            <% end %>
+          </div>
+        <% end %>
+        
+        <% if message.content.present? %>
+          <p class="whitespace-pre-wrap break-words"><%= message.content %></p>
+        <% end %>
         
         <div class="message-time flex items-center gap-1 justify-end">
           <span><%= l(message.created_at, format: :message) %></span>

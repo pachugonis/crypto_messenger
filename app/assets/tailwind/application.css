@@ -5,6 +5,7 @@
   /* Colors - Messenger theme */
   --color-primary: #6366f1;
   --color-primary-hover: #4f46e5;
+  --color-primary-light: #818cf8;
   --color-secondary: #8b5cf6;
   --color-accent: #06b6d4;
   --color-success: #10b981;
@@ -28,7 +29,7 @@
   --color-light-text-muted: #64748b;
   
   /* Message bubbles */
-  --color-message-own: #6366f1;
+  --color-message-own: #64748b;
   --color-message-own-text: #ffffff;
   --color-message-other: #334155;
   --color-message-other-text: #f1f5f9;
@@ -242,15 +243,52 @@
   
   /* Modal */
   .modal-backdrop {
-    @apply fixed inset-0 bg-black/50 flex items-center justify-center z-50;
+    @apply fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4;
   }
   
   .modal {
     @apply bg-dark-surface border border-dark-border rounded-2xl p-6 max-w-md w-full mx-4 shadow-xl;
   }
   
+  .modal-content {
+    @apply bg-dark-surface border border-dark-border rounded-2xl shadow-xl max-h-[90vh] max-w-lg w-full mx-auto flex flex-col;
+  }
+  
+  .modal-header {
+    @apply flex items-center justify-between p-6 border-b border-dark-border flex-shrink-0;
+  }
+  
+  .modal-title {
+    @apply text-xl font-bold;
+  }
+  
+  .modal-close {
+    @apply p-2 hover:bg-dark-surface-hover rounded-lg transition-colors flex-shrink-0;
+  }
+  
+  .modal-body {
+    @apply p-6 overflow-y-auto flex-1;
+  }
+  
+  .modal-footer {
+    @apply flex items-center justify-end gap-3 p-6 border-t border-dark-border flex-shrink-0;
+  }
+  
   .light .modal {
     @apply bg-light-surface border-light-border;
+  }
+  
+  .light .modal-content {
+    @apply bg-light-surface border-light-border;
+  }
+  
+  .light .modal-header,
+  .light .modal-footer {
+    @apply border-light-border;
+  }
+  
+  .light .modal-close {
+    @apply hover:bg-light-surface-hover;
   }
   
   /* Dropdown */
@@ -386,6 +424,19 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+@keyframes upload-progress {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.animate-upload-progress {
+  animation: upload-progress 0.3s ease-out forwards;
 }
 
 /* Turbo loading indicator */

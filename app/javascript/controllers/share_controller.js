@@ -17,10 +17,36 @@ export default class extends Controller {
       
       if (data.url) {
         await navigator.clipboard.writeText(data.url)
-        this.showNotification("Ссылка скопирована!")
+        this.showNotification(this.getTranslation('link_copied'))
       }
     } catch (error) {
       console.error("Error generating share link:", error)
+    }
+  }
+
+  async generateFolder() {
+    try {
+      const response = await fetch(this.urlValue, {
+        method: "POST",
+        headers: {
+          "Accept": "text/vnd.turbo-stream.html",
+          "X-CSRF-Token": document.querySelector("[name='csrf-token']").content
+        }
+      })
+      
+      // Let Turbo handle the stream response
+      if (response.ok) {
+        const stream = await response.text()
+        const div = document.createElement('div')
+        div.innerHTML = stream
+        
+        const streamElements = div.querySelectorAll('turbo-stream')
+        streamElements.forEach(element => {
+          document.body.appendChild(element)
+        })
+      }
+    } catch (error) {
+      console.error("Error generating folder share link:", error)
     }
   }
 
@@ -34,5 +60,12 @@ export default class extends Controller {
       toast.classList.add("opacity-0", "transition-opacity")
       setTimeout(() => toast.remove(), 300)
     }, 2000)
+  }
+
+  getTranslation(key) {
+    const translations = {
+      'link_copied': document.documentElement.lang === 'ru' ? 'Ссылка скопирована!' : 'Link copied!'
+    }
+    return translations[key] || key
   }
 }

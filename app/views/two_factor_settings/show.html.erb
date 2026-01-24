@@ -1,0 +1,118 @@
+<turbo-frame id="modal">
+  <div class="modal-backdrop" data-controller="modal" data-action="click->modal#closeOnBackdrop">
+    <div class="modal-content" data-action="click->modal#stopPropagation">
+      <div class="modal-header">
+        <h2 class="modal-title"><%= t("two_factor.title") %></h2>
+        <button class="modal-close" data-action="click->modal#close" type="button">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+    <div class="modal-body custom-scrollbar space-y-6">
+      <!-- Current Status -->
+      <div class="card">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="font-semibold text-lg"><%= t("two_factor.status") %></h3>
+            <p class="text-dark-text-muted text-sm mt-1">
+              <% if @user.otp_enabled? %>
+                <span class="text-success"><%= t("two_factor.enabled") %></span>
+              <% else %>
+                <span class="text-dark-text-muted"><%= t("two_factor.disabled") %></span>
+              <% end %>
+            </p>
+          </div>
+          <div>
+            <% if @user.otp_enabled? %>
+              <span class="px-3 py-1 rounded-full bg-success/20 text-success text-sm">
+                <%= t("two_factor.enabled") %>
+              </span>
+            <% else %>
+              <span class="px-3 py-1 rounded-full bg-dark-text-muted/20 text-dark-text-muted text-sm">
+                <%= t("two_factor.disabled") %>
+              </span>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <% if @user.otp_enabled? %>
+        <!-- Backup Codes Info -->
+        <% if @user.otp_backup_codes.present? %>
+          <% codes_count = JSON.parse(@user.otp_backup_codes).length %>
+          <div class="card bg-dark-surface">
+            <div class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-warning mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+              </svg>
+              <div class="flex-1">
+                <p class="font-medium"><%= t("two_factor.setup.remaining_codes", count: codes_count) %></p>
+                <p class="text-sm text-dark-text-muted mt-1"><%= t("two_factor.setup.backup_codes_warning") %></p>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <!-- Actions for enabled 2FA -->
+        <div class="space-y-3">
+          <!-- Regenerate Backup Codes Form -->
+          <%= form_with url: regenerate_codes_two_factor_settings_path, method: :post, data: { turbo_frame: "modal" }, class: "w-full" do |f| %>
+            <div class="mb-3">
+              <%= f.label :password, t("two_factor.regenerate.password_required"), class: "label" %>
+              <%= f.password_field :password, class: "input", placeholder: t("two_factor.disable.password_placeholder"), required: true %>
+            </div>
+            <%= f.submit t("two_factor.regenerate_codes_button"), class: "btn btn-secondary w-full" %>
+          <% end %>
+
+          <hr class="border-dark-border">
+
+          <!-- Disable 2FA Form -->
+          <%= form_with url: disable_two_factor_settings_path, method: :delete, data: { turbo_frame: "modal" }, class: "w-full" do |f| %>
+            <div class="mb-3">
+              <%= f.label :password, t("two_factor.disable.password_required"), class: "label" %>
+              <%= f.password_field :password, class: "input", placeholder: t("two_factor.disable.password_placeholder"), required: true %>
+            </div>
+            <%= f.submit t("two_factor.disable_button"), class: "btn btn-danger w-full" %>
+          <% end %>
+        </div>
+      <% else %>
+        <!-- Enable 2FA -->
+        <div class="space-y-4">
+          <div class="p-4 bg-dark-surface rounded-lg">
+            <h4 class="font-medium mb-2">Зачем нужна двухфакторная аутентификация?</h4>
+            <ul class="text-sm text-dark-text-muted space-y-2">
+              <li class="flex items-start gap-2">
+                <svg class="w-5 h-5 text-success flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <span>Дополнительный уровень защиты вашего аккаунта</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <svg class="w-5 h-5 text-success flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <span>Защита от несанкционированного доступа</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <svg class="w-5 h-5 text-success flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <span>Работает с популярными приложениями (Google Authenticator, Authy)</span>
+              </li>
+            </ul>
+          </div>
+
+          <%= button_to enable_two_factor_settings_path, method: :post, data: { turbo_frame: "modal" }, class: "btn btn-primary w-full" do %>
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+            </svg>
+            <%= t("two_factor.enable_button") %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+    </div>
+  </div>
+</turbo-frame>

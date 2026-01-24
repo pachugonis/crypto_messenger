@@ -22,15 +22,5 @@
     <div class="card">
       <%= yield %>
     </div>
-
-    <!-- Theme toggle -->
-    <div class="mt-6 text-center">
-      <button class="btn btn-ghost btn-sm" data-controller="theme" data-action="click->theme#toggle">
-        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
-        </svg>
-        <%= t("settings.appearance.theme") %>
-      </button>
-    </div>
   </div>
 </div>

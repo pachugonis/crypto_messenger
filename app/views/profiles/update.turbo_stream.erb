@@ -1,0 +1,15 @@
+<%= turbo_stream.update "modal", "" %>
+
+<%= turbo_stream.update "main-content" do %>
+  <%= render "profiles/show_content" %>
+<% end %>
+
+<%= turbo_stream.update "sidebar-avatar" do %>
+  <% if @user.avatar.attached? %>
+    <%= image_tag @user.avatar.variant(resize_to_limit: [100, 100]), alt: @user.username, class: "w-10 h-10 rounded-full object-cover" %>
+  <% else %>
+    <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+      <span class="text-lg font-bold text-primary"><%= @user.username[0].upcase %></span>
+    </div>
+  <% end %>
+<% end %>

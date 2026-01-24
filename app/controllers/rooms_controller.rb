@@ -1,6 +1,8 @@
 class RoomsController < ApplicationController
-  before_action :set_room, only: [ :show, :edit, :update, :destroy, :leave, :mark_read ]
-  before_action :authorize_room_access, only: [ :show, :edit, :update, :destroy ]
+  before_action :set_room, only: [ :show, :edit, :update, :destroy, :leave, :join, :mark_read, :destroy_image ]
+  before_action :authorize_room_access, only: [ :show ]
+  before_action :authorize_room_edit, only: [ :edit, :update, :destroy_image ]
+  before_action :authorize_room_delete, only: [ :destroy ]
 
   def index
     @rooms = current_user.rooms.includes(:users, :messages).order(updated_at: :desc)
@@ -10,12 +12,20 @@ class RoomsController < ApplicationController
   end
 
   def show
-    @messages = @room.messages.not_deleted.chronological.includes(:user, :message_reads).last(50)
-    @participant = @room.room_participants.find_by(user: current_user)
-    @participant&.mark_as_read!
+    # Allow viewing public rooms even if not a participant
+    @is_participant = @room.participant?(current_user)
     
-    # Mark all messages in this room as read by current user
-    mark_messages_as_read
+    if @is_participant
+      @messages = @room.messages.not_deleted.chronological.includes(:user, :message_reads).last(50)
+      @participant = @room.room_participants.find_by(user: current_user)
+      @participant&.mark_as_read!
+      
+      # Mark all messages in this room as read by current user
+      mark_messages_as_read
+    else
+      # For non-participants, show empty messages or limited info
+      @messages = []
+    end
   end
 
   def new
@@ -49,6 +59,27 @@ class RoomsController < ApplicationController
       @room.save!
       @room.room_participants.create!(user: current_user, role: :owner)
 
+      # Process and attach image if provided
+      if params[:room] && params[:room][:image].present?
+        require 'mini_magick'
+        
+        file = params[:room][:image]
+        image = MiniMagick::Image.read(file.tempfile)
+        
+        # Crop to square from center
+        size = [image.width, image.height].min
+        image.crop "#{size}x#{size}+#{(image.width - size) / 2}+#{(image.height - size) / 2}"
+        # Resize to 200x200
+        image.resize "200x200"
+        
+        # Attach processed image
+        @room.image.attach(
+          io: File.open(image.path),
+          filename: "room_#{@room.id}.jpg",
+          content_type: "image/jpeg"
+        )
+      end
+
       # For personal chats, add the other user
       if @room.personal_chat? && params[:user_id].present?
         # Reuse the other_user variable from above
@@ -61,7 +92,20 @@ class RoomsController < ApplicationController
       end
     end
 
-    redirect_to @room, notice: t("rooms.messages.created")
+    respond_to do |format|
+      format.html do
+        # Don't show "Chat created" notice for personal chats, just open the chat
+        if @room.personal_chat?
+          redirect_to @room
+        else
+          redirect_to @room, notice: t("rooms.messages.created")
+        end
+      end
+      format.turbo_stream do
+        # Update sidebar with new room and redirect to room
+        @rooms = current_user.rooms.includes(:users, :messages).order(updated_at: :desc)
+      end
+    end
   rescue ActiveRecord::RecordInvalid
     render :new, status: :unprocessable_entity
   rescue ActiveRecord::RecordNotFound
@@ -72,8 +116,32 @@ class RoomsController < ApplicationController
   end
 
   def update
-    if @room.update(room_params)
+    if params[:room] && params[:room][:image].present?
+      # Process the image with ImageProcessing
+      require 'mini_magick'
+      
+      file = params[:room][:image]
+      image = MiniMagick::Image.read(file.tempfile)
+      
+      # Crop to square from center
+      size = [image.width, image.height].min
+      image.crop "#{size}x#{size}+#{(image.width - size) / 2}+#{(image.height - size) / 2}"
+      # Resize to 200x200
+      image.resize "200x200"
+      
+      # Attach processed image
+      @room.image.attach(
+        io: File.open(image.path),
+        filename: "room_#{@room.id}.jpg",
+        content_type: "image/jpeg"
+      )
+    end
+
+    if params[:room].present? && @room.update(room_params)
       redirect_to @room, notice: t("rooms.messages.updated")
+    elsif params[:room].blank?
+      # If no room params (e.g., from image deletion), just redirect
+      redirect_to edit_room_path(@room)
     else
       render :edit, status: :unprocessable_entity
     end
@@ -81,7 +149,14 @@ class RoomsController < ApplicationController
 
   def destroy
     @room.destroy
-    redirect_to rooms_path, notice: t("rooms.messages.deleted")
+    
+    respond_to do |format|
+      format.turbo_stream do
+        # Return updated rooms list for sidebar
+        @rooms = current_user.rooms.includes(:users, :messages).order(updated_at: :desc)
+      end
+      format.html { redirect_to rooms_path, notice: t("rooms.messages.deleted") }
+    end
   end
 
   def leave
@@ -90,10 +165,30 @@ class RoomsController < ApplicationController
     redirect_to rooms_path, notice: t("rooms.messages.left")
   end
 
+  def join
+    unless @room.participant?(current_user)
+      @room.room_participants.create!(user: current_user, role: :member)
+      redirect_to @room, notice: t("rooms.messages.joined")
+    else
+      redirect_to @room, alert: t("rooms.messages.already_member")
+    end
+  end
+
   def mark_read
     participant = @room.room_participants.find_by(user: current_user)
     participant&.mark_as_read!
     head :ok
+  end
+
+  def destroy_image
+    if @room.image.attached?
+      @room.image.purge
+      Rails.logger.info "Image purged for room #{@room.id}"
+      redirect_to edit_room_path(@room), notice: t("rooms.messages.image_removed")
+    else
+      Rails.logger.warn "Attempted to delete non-existent image for room #{@room.id}"
+      redirect_to edit_room_path(@room), alert: "Image not found"
+    end
   end
 
   private
@@ -108,8 +203,38 @@ class RoomsController < ApplicationController
     end
   end
 
+  def authorize_room_edit
+    # For personal chats, both participants can edit
+    if @room.personal_chat?
+      unless @room.participant?(current_user)
+        redirect_to rooms_path, alert: t("common.access_denied")
+      end
+    else
+      # For groups and channels, only owner and admins can edit
+      participant = @room.room_participants.find_by(user: current_user)
+      unless participant && (participant.owner? || participant.admin?)
+        redirect_to rooms_path, alert: t("common.access_denied")
+      end
+    end
+  end
+
+  def authorize_room_delete
+    # Only owner and admin can delete room
+    if @room.personal_chat?
+      unless @room.participant?(current_user)
+        redirect_to rooms_path, alert: t("common.access_denied")
+      end
+    else
+      # For groups and channels, owner and admins can delete
+      participant = @room.room_participants.find_by(user: current_user)
+      unless participant && (participant.owner? || participant.admin?)
+        redirect_to rooms_path, alert: t("common.access_denied")
+      end
+    end
+  end
+
   def room_params
-    params.require(:room).permit(:name, :description, :room_type, :visibility)
+    params.require(:room).permit(:name, :description, :room_type, :visibility, :handle)
   end
 
   def mark_messages_as_read

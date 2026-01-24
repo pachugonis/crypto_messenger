@@ -13,13 +13,19 @@ export default class extends Controller {
       { channel: "RoomChannel", room_id: this.idValue },
       {
         received: (data) => this.handleReceived(data),
-        connected: () => console.log("Connected to room", this.idValue),
+        connected: () => {
+          console.log("Connected to room", this.idValue)
+          this.observeNewMessages()
+        },
         disconnected: () => console.log("Disconnected from room", this.idValue)
       }
     )
   }
 
   disconnect() {
+    if (this.messageObserver) {
+      this.messageObserver.disconnect()
+    }
     if (this.subscription) {
       this.subscription.unsubscribe()
     }
@@ -76,5 +82,30 @@ export default class extends Controller {
     } else {
       indicator.classList.add("hidden")
     }
+  }
+  
+  observeNewMessages() {
+    const messagesContainer = document.getElementById("messages")
+    if (!messagesContainer) return
+    
+    // Watch for new messages being added to the DOM
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        mutation.addedNodes.forEach((node) => {
+          if (node.nodeType === 1 && node.classList?.contains('message')) {
+            const messageId = node.id?.replace('message_', '')
+            if (messageId && !node.classList.contains('message-own')) {
+              // Notify server that message was delivered
+              this.subscription.perform('message_delivered', { message_id: messageId })
+            }
+          }
+        })
+      })
+    })
+    
+    observer.observe(messagesContainer, { childList: true, subtree: true })
+    
+    // Store observer to disconnect later
+    this.messageObserver = observer
   }
 }

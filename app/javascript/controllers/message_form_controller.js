@@ -27,6 +27,12 @@ export default class extends Controller {
     this.resize()
     this.inputTarget.focus()
     
+    // Clear image preview if upload controller exists
+    const uploadController = this.application.getControllerForElementAndIdentifier(this.element, "upload")
+    if (uploadController) {
+      uploadController.removeImage(new Event('click'))
+    }
+    
     // Scroll to bottom after message sent
     const container = document.getElementById("messages-container")
     if (container) {

@@ -40,6 +40,7 @@ en:
     groups: "Groups"
     channels: "Channels"
     folders: "Folders"
+    profile: "Profile"
     settings: "Settings"
     admin: "Admin"
     logout: "Logout"
@@ -101,12 +102,26 @@ en:
         username: "Username"
         password: "Password"
         password_confirmation: "Password Confirmation"
+      room:
+        name: "Name"
+        room_type: "Type"
+        visibility: "Visibility"
+        description: "Description"
+        handle: "Handle"
     errors:
       models:
         user:
           attributes:
             username:
               invalid_username_format: "can only contain letters (a-z), numbers (0-9) and underscores (_)"
+        room:
+          attributes:
+            handle:
+              blank: "can't be blank for groups and channels"
+              taken: "is already taken. A group or channel with this handle already exists"
+              invalid_handle_format: "can only contain lowercase letters (a-z), numbers (0-9) and underscores (_)"
+              too_short: "is too short (minimum 3 characters)"
+              too_long: "is too long (maximum 50 characters)"
 
   # Admin
   admin:
@@ -126,6 +141,7 @@ en:
     loading: "Loading..."
     confirm: "Confirm"
     copy: "Copy"
+    copied: "Copied"
     continue: "Continue"
     access_denied: "Access denied"
     user_not_found: "User not found"
@@ -156,3 +172,164 @@ en:
       new_channel: "Create Channel"
       empty: "You don't have any chats yet"
       search_placeholder: "Search..."
+    handle: "Handle"
+    handle_hint: "Use only a-z, 0-9 and _"
+    handle_help: "Unique identifier for links. If not specified, will be generated automatically"
+    handle_required: "Unique identifier (required). Group/channel names can be duplicated, but @handle must be unique"
+    handle_latin_only: "⚠️ Only Latin letters (a-z), numbers (0-9) and underscores (_) allowed. Invalid characters removed."
+    new:
+      title_chat: "New Chat"
+      title_group: "New Group"
+      title_channel: "New Channel"
+    edit:
+      title: "Edit"
+    types:
+      personal_chat: "Personal Chat"
+      group: "Group"
+      channel: "Channel"
+    visibility:
+      public: "Public"
+      private: "Private"
+    messages:
+      created: "Chat created"
+      updated: "Settings saved"
+      deleted: "Chat deleted"
+      left: "You left the chat"
+      joined: "You joined the chat"
+      already_member: "You are already a member of this group"
+      chat_exists: "Chat with this user already exists"
+      image_removed: "Image removed"
+    image: "Image"
+    image_description: "Upload an image for the group or channel. It will be automatically cropped to 200x200 pixels."
+    remove_image: "Remove image"
+    confirm_remove_image: "Are you sure you want to remove the image?"
+    invite_link:
+      title: "Invite Link"
+      description: "Share this link to invite users to the group or channel"
+      copy: "Copy link"
+      handle_label: "Or use the handle:"
+    show:
+      message_placeholder: "Type a message..."
+      send: "Send"
+      participants: "Participants"
+      settings: "Settings"
+      leave: "Leave"
+      delete: "Delete Group/Channel"
+      confirm_delete: "Are you sure you want to delete this group/channel? All messages will be permanently deleted."
+      delete_chat: "Delete Chat"
+      confirm_delete_chat: "Are you sure you want to delete this chat? All messages will be permanently deleted."
+      join_button: "Join"
+      join_group_prompt: "Join this group to participate in conversations"
+      join_channel_prompt: "Subscribe to this channel to receive updates"
+
+  # Participants
+  participants:
+    count:
+      one: "%{count} participant"
+      other: "%{count} participants"
+    add: "Add participant"
+    roles:
+      owner: "Owner"
+      admin: "Administrator"
+      member: "Member"
+
+  # Folders
+  folders:
+    actions:
+      rename: "Rename"
+      delete: "Delete"
+      share: "Share"
+      confirm_delete: "Are you sure you want to delete this folder? All files and subfolders will be deleted."
+    share:
+      title: "Public folder link"
+      description: "Anyone with this link can view and download files from this folder"
+      modal_description: "Choose how long the folder link will be valid"
+      expires_in: "Link expiration"
+      generate: "Generate link"
+      share_link: "Share link"
+      link_created: "Link created!"
+      link_created_description: "Copy the link and share it with the people you need"
+      duration:
+        one_day: "1 day"
+        one_week: "7 days"
+        one_month: "30 days"
+        one_year: "1 year"
+      revoke: "Revoke"
+      expires: "Expires in %{time}"
+      expires_at: "Valid until: %{date}"
+      public_view: "Public View"
+      shared_by: "Shared by: %{name}"
+      subfolder_restricted: "Not available"
+      invalid_link: "Link is invalid"
+      invalid_description: "This link has expired or been revoked"
+    index:
+      title: "My Folders"
+      new: "Create Folder"
+      empty: "You don't have any folders yet"
+    new:
+      title: "New Folder"
+    edit:
+      title: "Rename Folder"
+    show:
+      upload: "Upload"
+      empty: "Folder is empty"
+    messages:
+      created: "Folder created"
+      updated: "Folder updated"
+      deleted: "Folder deleted"
+
+  # Attachments
+  attachments:
+    upload: "Upload"
+    download: "Download"
+    delete: "Delete"
+    invalid_token: "Invalid or expired link"
+    messages:
+      uploaded: "File uploaded"
+      uploaded_multiple: "Uploaded %{count} files"
+      deleted: "File deleted"
+      upload_failed: "Upload failed: %{files}"
+
+  # Profile
+  profile:
+    title: "Profile"
+    description: "Manage your profile and security settings"
+    avatar:
+      title: "Avatar"
+      description: "Upload a photo for your profile"
+      change: "Change avatar"
+      remove: "Remove avatar"
+      confirm_remove: "Are you sure you want to remove your avatar?"
+      select_image: "Select image"
+      upload_description: "Upload an image, it will be automatically cropped to 100x100 pixels"
+      size_note: "Image will be automatically cropped and resized to 100x100 pixels"
+      adjust: "Preview and crop"
+    info:
+      title: "Profile Information"
+      username: "Username"
+      username_note: "Username cannot be changed"
+      email: "Email"
+      no_email: "Not specified"
+    password:
+      title: "Password"
+      description: "Changing password will generate a new recovery code"
+      change: "Change password"
+      change_description: "Enter a new password. After changing, you will receive a new recovery code."
+      new_password: "New password"
+      confirm_password: "Confirm password"
+      enter_new: "Enter new password"
+      confirm_new: "Repeat new password"
+      warning: "Warning! After changing your password, you will receive a new recovery code. Save it in a secure place."
+    recovery:
+      title: "New Recovery Code"
+      warning_title: "Important!"
+      warning_text: "Save this code in a secure place. You'll need it to recover access to your account."
+      new_code: "New recovery code"
+      instruction_1: "Copy the code or write it down on paper"
+      instruction_2: "Keep the code in a secure place"
+      instruction_3: "A new code will be generated when you change your password again"
+    messages:
+      updated: "Profile updated"
+      avatar_updated: "Avatar updated"
+      avatar_removed: "Avatar removed"
+      password_updated: "Password successfully changed"

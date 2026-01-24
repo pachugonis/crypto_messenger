@@ -11,7 +11,7 @@ class SearchController < ApplicationController
                    .where("name ILIKE ?", "%#{@query}%")
                    .limit(10)
 
-      @public_channels = Room.channel
+      @public_channels = Room.room_type_channel
                              .visibility_public_room
                              .where("name ILIKE ?", "%#{@query}%")
                              .where.not(id: current_user.rooms.pluck(:id))

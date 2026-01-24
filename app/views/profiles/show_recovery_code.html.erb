@@ -1,0 +1,43 @@
+<turbo-frame id="modal">
+  <div class="modal-backdrop" data-controller="modal">
+    <div class="modal-content" data-action="click->modal#stopPropagation">
+      <div class="modal-header">
+        <h2 class="modal-title"><%= t("profile.recovery.title") %></h2>
+      </div>
+
+      <div class="modal-body">
+        <div class="bg-warning/10 border border-warning/30 rounded-lg p-4 mb-4">
+          <div class="flex items-start gap-3">
+            <svg class="w-6 h-6 text-warning flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+            </svg>
+            <div>
+              <h3 class="font-semibold text-warning mb-1"><%= t("profile.recovery.warning_title") %></h3>
+              <p class="text-sm text-dark-text"><%= t("profile.recovery.warning_text") %></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-dark-surface rounded-lg p-4 mb-4">
+          <label class="form-label"><%= t("profile.recovery.new_code") %></label>
+          <div class="flex gap-2">
+            <input type="text" readonly value="<%= @new_recovery_code %>" class="input flex-1 font-mono text-lg" id="recovery_code_input">
+            <button class="btn btn-primary" onclick="navigator.clipboard.writeText(document.getElementById('recovery_code_input').value); this.textContent='<%= t('common.copied') %>'; setTimeout(() => this.textContent='<%= t('common.copy') %>', 2000)">
+              <%= t("common.copy") %>
+            </button>
+          </div>
+        </div>
+
+        <div class="space-y-2 text-sm text-dark-text-muted">
+          <p>• <%= t("profile.recovery.instruction_1") %></p>
+          <p>• <%= t("profile.recovery.instruction_2") %></p>
+          <p>• <%= t("profile.recovery.instruction_3") %></p>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <%= link_to t("common.close"), profile_path, class: "btn btn-primary", data: { turbo_frame: "_top" } %>
+      </div>
+    </div>
+  </div>
+</turbo-frame>

@@ -7,9 +7,9 @@ class Admin::DashboardController < Admin::BaseController
     @storage_used = ActiveStorage::Blob.sum(:byte_size)
 
     @rooms_by_type = {
-      personal_chats: Room.personal_chat.count,
-      groups: Room.group.count,
-      channels: Room.channel.count
+      personal_chats: Room.room_type_personal_chat.count,
+      groups: Room.room_type_group.count,
+      channels: Room.room_type_channel.count
     }
 
     @recent_users = User.order(created_at: :desc).limit(5)

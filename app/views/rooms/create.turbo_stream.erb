@@ -1,0 +1,22 @@
+<%# Update sidebar with new room list %>
+<%= turbo_stream.update "rooms-sidebar" do %>
+  <%= render "rooms/list", rooms: @rooms %>
+<% end %>
+
+<%# Close modal %>
+<%= turbo_stream.update "modal" do %>
+<% end %>
+
+<%# Show success message if it's a group or channel %>
+<% unless @room.personal_chat? %>
+  <%= turbo_stream.prepend "main-content" do %>
+    <div class="toast toast-success" data-controller="toast" data-toast-delay-value="3000">
+      <%= t("rooms.messages.created") %>
+    </div>
+  <% end %>
+<% end %>
+
+<%# Redirect to the new room %>
+<script>
+  Turbo.visit("<%= room_path(@room) %>")
+</script>

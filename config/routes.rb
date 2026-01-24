@@ -3,6 +3,18 @@ Rails.application.routes.draw do
   resource :session
   resources :passwords, param: :token
   resource :registration, only: [ :new, :create ]
+  resource :profile, only: [ :show, :edit, :update ] do
+    delete :destroy_avatar, on: :member
+  end
+
+  # Two-factor authentication
+  resource :two_factor_authentication, only: [ :new, :create ], path: "2fa", controller: "two_factor_authentication"
+  resource :two_factor_settings, only: [ :show ], path: "settings/2fa" do
+    post :enable, on: :collection
+    post :verify, on: :collection
+    delete :disable, on: :collection
+    post :regenerate_codes, on: :collection
+  end
 
   # Main application
   resources :rooms do
@@ -14,17 +26,27 @@ Rails.application.routes.draw do
     end
     member do
       post :leave
+      post :join
       post :mark_read
+      delete :destroy_image
     end
   end
 
   resources :folders do
+    member do
+      get :new_share_link
+      post :generate_share_link
+      delete :revoke_share_link
+    end
     resources :attachments, only: [ :create, :destroy ] do
       member do
         post :generate_link
       end
     end
   end
+
+  # Shared folder access (public)
+  get "shared_folder/:token", to: "folders#shared", as: :shared_folder
 
   # Shared attachments (access by token)
   get "shared/:token", to: "attachments#shared", as: :shared_attachment

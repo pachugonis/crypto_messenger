@@ -1,6 +1,7 @@
 class FoldersController < ApplicationController
-  before_action :set_folder, only: [ :show, :edit, :update, :destroy ]
-  before_action :authorize_folder_owner, only: [ :show, :edit, :update, :destroy ]
+  allow_unauthenticated_access only: [ :shared ]
+  before_action :set_folder, only: [ :show, :edit, :update, :destroy, :new_share_link, :generate_share_link, :revoke_share_link ]
+  before_action :authorize_folder_owner, only: [ :show, :edit, :update, :destroy, :new_share_link, :generate_share_link, :revoke_share_link ]
 
   def index
     @folders = current_user.folders.root_folders.order(:name)
@@ -19,7 +20,19 @@ class FoldersController < ApplicationController
     @folder = current_user.folders.build(folder_params)
 
     if @folder.save
-      redirect_to @folder, notice: t("folders.messages.created")
+      respond_to do |format|
+        format.html { redirect_to @folder, notice: t("folders.messages.created") }
+        format.turbo_stream do
+          # Reload parent folder's subfolders if creating in a folder
+          if @folder.parent_folder
+            @parent_folder = @folder.parent_folder
+            @subfolders = @parent_folder.subfolders.order(:name)
+          else
+            # Reload root folders if creating at root level
+            @folders = current_user.folders.root_folders.order(:name)
+          end
+        end
+      end
     else
       render :new, status: :unprocessable_entity
     end
@@ -30,7 +43,19 @@ class FoldersController < ApplicationController
 
   def update
     if @folder.update(folder_params)
-      redirect_to @folder, notice: t("folders.messages.updated")
+      respond_to do |format|
+        format.html { redirect_to @folder, notice: t("folders.messages.updated") }
+        format.turbo_stream do
+          # Reload parent folder's subfolders if this is a subfolder
+          if @folder.parent_folder
+            @parent_folder = @folder.parent_folder
+            @subfolders = @parent_folder.subfolders.order(:name)
+          else
+            # Reload root folders if this is a root folder
+            @folders = current_user.folders.root_folders.order(:name)
+          end
+        end
+      end
     else
       render :edit, status: :unprocessable_entity
     end
@@ -40,6 +65,50 @@ class FoldersController < ApplicationController
     parent = @folder.parent_folder
     @folder.destroy
     redirect_to parent || folders_path, notice: t("folders.messages.deleted")
+  end
+
+  def generate_share_link
+    expires_in = params[:expires_in]&.to_i || 7
+    @token = @folder.generate_share_link!(expires_in: expires_in.days)
+
+    respond_to do |format|
+      format.turbo_stream do
+        render :share_link_success
+      end
+      format.json { render json: { url: shared_folder_url(@token) } }
+    end
+  end
+
+  def new_share_link
+    render :new_share_link
+  end
+
+  def revoke_share_link
+    @folder.revoke_share_link!
+    
+    respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.update(
+          "folder_share_link",
+          partial: "folders/share_link",
+          locals: { folder: @folder, token: nil }
+        )
+      end
+      format.json { head :ok }
+    end
+  end
+
+  def shared
+    @folder = Folder.find_by(share_token: params[:token])
+
+    if @folder.nil? || !@folder.share_token_valid?
+      render :invalid_token, layout: "public", status: :not_found
+      return
+    end
+
+    @subfolders = @folder.subfolders.order(:name)
+    @attachments = @folder.attachments.includes(file_attachment: :blob).order(created_at: :desc)
+    render :shared, layout: "public"
   end
 
   private

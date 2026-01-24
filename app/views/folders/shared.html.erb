@@ -1,0 +1,81 @@
+<% content_for :title, "#{@folder.name} - #{t('folders.share.public_view')}" %>
+
+<div class="min-h-screen">
+  <!-- Header -->
+  <header class="bg-dark-surface border-b border-dark-border">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+      <%= link_to root_url, class: "flex items-center gap-2 hover:opacity-80 transition-opacity" do %>
+        <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+        </svg>
+        <div>
+          <div class="font-bold text-dark-text"><%= t("app.name") %></div>
+          <div class="text-xs text-dark-text-muted"><%= t("app.tagline") %></div>
+        </div>
+      <% end %>
+    </div>
+  </header>
+
+  <!-- Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <!-- Subfolders -->
+      <% if @subfolders.any? %>
+        <section class="mb-6">
+          <h2 class="text-base font-semibold text-dark-text mb-3"><%= t("nav.folders") %></h2>
+          <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+            <% @subfolders.each do |subfolder| %>
+              <div class="card p-3 opacity-50 cursor-not-allowed">
+                <div class="flex items-center gap-2 mb-2">
+                  <svg class="w-8 h-8 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
+                  </svg>
+                  <div class="flex-1 min-w-0">
+                    <p class="font-medium truncate text-sm"><%= subfolder.name %></p>
+                    <p class="text-xs text-dark-text-muted"><%= t("folders.share.subfolder_restricted") %></p>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </section>
+      <% end %>
+
+      <!-- Files -->
+      <section>
+        <h2 class="text-base font-semibold text-dark-text mb-3"><%= t("attachments.upload") %></h2>
+        <% if @attachments.any? %>
+          <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+            <% @attachments.each do |attachment| %>
+              <div class="card p-3 hover:shadow-lg transition-shadow">
+                <% if attachment.image? %>
+                  <%= image_tag attachment.file.variant(resize_to_limit: [200, 200]), class: "w-full h-32 object-cover rounded-lg mb-2" %>
+                <% else %>
+                  <div class="w-full h-32 flex items-center justify-center bg-dark-surface-hover rounded-lg mb-2">
+                    <svg class="w-12 h-12 text-dark-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                    </svg>
+                  </div>
+                <% end %>
+                <p class="text-sm font-medium truncate mb-1"><%= attachment.filename %></p>
+                <p class="text-xs text-dark-text-muted mb-2"><%= number_to_human_size(attachment.byte_size) %></p>
+                <%= link_to rails_blob_path(attachment.file, disposition: "attachment"), class: "btn btn-sm btn-primary w-full flex items-center justify-center gap-1" do %>
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                  </svg>
+                  <span><%= t("attachments.download") %></span>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="text-center py-12">
+            <svg class="w-16 h-16 mx-auto text-dark-text-muted opacity-50 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+            </svg>
+            <p class="text-dark-text-muted"><%= t("folders.show.empty") %></p>
+          </div>
+        <% end %>
+      </section>
+    </main>
+  </div>
+</div>

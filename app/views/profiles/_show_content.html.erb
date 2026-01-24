@@ -1,0 +1,92 @@
+<div class="flex-1 flex flex-col p-6 overflow-y-auto">
+  <div class="max-w-2xl mx-auto w-full">
+    <!-- Header -->
+    <div class="mb-6">
+      <h1 class="text-2xl font-bold mb-2"><%= t("profile.title") %></h1>
+      <p class="text-dark-text-muted"><%= t("profile.description") %></p>
+    </div>
+
+    <% if flash[:notice] %>
+      <div class="alert alert-success mb-6">
+        <%= flash[:notice] %>
+      </div>
+    <% end %>
+
+    <!-- Avatar Section -->
+    <div class="card mb-6">
+      <h2 class="text-lg font-semibold mb-4"><%= t("profile.avatar.title") %></h2>
+      
+      <div class="flex items-start gap-6">
+        <div class="flex-shrink-0">
+          <% if @user.avatar.attached? %>
+            <%= image_tag @user.avatar.variant(resize_to_limit: [100, 100]), class: "w-24 h-24 rounded-full object-cover" %>
+          <% else %>
+            <div class="w-24 h-24 rounded-full bg-primary/20 flex items-center justify-center">
+              <span class="text-3xl font-bold text-primary"><%= @user.username[0].upcase %></span>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="flex-1">
+          <p class="text-sm text-dark-text-muted mb-4"><%= t("profile.avatar.description") %></p>
+          <%= link_to t("profile.avatar.change"), edit_profile_path, class: "btn btn-secondary btn-sm", data: { turbo_frame: "modal" } %>
+          <% if @user.avatar.attached? %>
+            <%= button_to t("profile.avatar.remove"), destroy_avatar_profile_path, method: :delete, class: "btn btn-danger btn-sm ml-2", data: { turbo_confirm: t("profile.avatar.confirm_remove") } %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Profile Info -->
+    <div class="card mb-6">
+      <h2 class="text-lg font-semibold mb-4"><%= t("profile.info.title") %></h2>
+      
+      <div class="space-y-4">
+        <div>
+          <label class="form-label"><%= t("profile.info.username") %></label>
+          <div class="input bg-dark-surface-hover cursor-not-allowed">
+            <%= @user.username %>
+          </div>
+          <p class="text-xs text-dark-text-muted mt-1"><%= t("profile.info.username_note") %></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Password Section -->
+    <div class="card mb-6">
+      <h2 class="text-lg font-semibold mb-4"><%= t("profile.password.title") %></h2>
+      <p class="text-sm text-dark-text-muted mb-4"><%= t("profile.password.description") %></p>
+      <%= link_to t("profile.password.change"), edit_profile_path(section: "password"), class: "btn btn-secondary", data: { turbo_frame: "modal" } %>
+    </div>
+
+    <!-- Two-Factor Authentication Section -->
+    <div class="card">
+      <div class="flex items-start justify-between mb-4">
+        <div>
+          <h2 class="text-lg font-semibold"><%= t("two_factor.title") %></h2>
+          <p class="text-sm text-dark-text-muted mt-1">
+            <% if @user.otp_enabled? %>
+              <span class="text-success"><%= t("two_factor.enabled") %></span>
+            <% else %>
+              <%= t("two_factor.disabled") %>
+            <% end %>
+          </p>
+        </div>
+        <% if @user.otp_enabled? %>
+          <span class="px-3 py-1 rounded-full bg-success/20 text-success text-sm flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <%= t("two_factor.enabled") %>
+          </span>
+        <% end %>
+      </div>
+      
+      <p class="text-sm text-dark-text-muted mb-4">
+        Двухфакторная аутентификация добавляет дополнительный уровень защиты для вашего аккаунта.
+      </p>
+      
+      <%= link_to t("profile.two_factor.manage"), two_factor_settings_path, class: "btn btn-secondary", data: { turbo_frame: "modal" }, target: "_top" %>
+    </div>
+  </div>
+</div>

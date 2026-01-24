@@ -3,19 +3,47 @@
 <% end %>
 
 <%= turbo_stream.replace "message_form" do %>
-  <%= form_with model: [@room, Message.new], id: "message_form", class: "flex items-end gap-2 w-full", data: { controller: "message-form", action: "turbo:submit-end->message-form#reset" } do |f| %>
-    <%= f.text_area :content, 
-        class: "chat-input", 
-        placeholder: t("rooms.show.message_placeholder"), 
-        rows: 1,
-        data: { 
-          message_form_target: "input",
-          action: "input->message-form#resize keydown->message-form#handleKeydown input->room#typing"
-        } %>
-    <button type="submit" class="btn btn-primary btn-icon" data-message-form-target="submit">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-      </svg>
-    </button>
+  <%= form_with model: [@room, Message.new], id: "message_form", class: "flex flex-col gap-2 w-full", data: { controller: "message-form upload", action: "turbo:submit-end->message-form#reset" } do |f| %>
+    <!-- Image preview -->
+    <div data-upload-target="preview" class="hidden">
+      <div class="relative inline-block">
+        <img data-upload-target="previewImage" class="max-h-32 rounded-lg" />
+        <button type="button" data-action="click->upload#removeImage" class="absolute -top-2 -right-2 btn btn-error btn-icon btn-sm">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    
+    <div class="flex items-end gap-2">
+      <!-- Image upload button -->
+      <label class="btn btn-secondary btn-icon cursor-pointer flex-shrink-0">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+        </svg>
+        <%= f.file_field :image, 
+            accept: "image/png,image/jpeg,image/jpg,image/gif,image/webp",
+            class: "hidden",
+            data: { 
+              upload_target: "input",
+              action: "change->upload#previewImage"
+            } %>
+      </label>
+      
+      <%= f.text_area :content, 
+          class: "chat-input", 
+          placeholder: t("rooms.show.message_placeholder"), 
+          rows: 1,
+          data: { 
+            message_form_target: "input",
+            action: "input->message-form#resize keydown->message-form#handleKeydown input->room#typing"
+          } %>
+      <button type="submit" class="btn btn-primary btn-icon" data-message-form-target="submit">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+        </svg>
+      </button>
+    </div>
   <% end %>
 <% end %>

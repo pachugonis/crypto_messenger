@@ -76,4 +76,83 @@ class User < ApplicationRecord
     save!
     @recovery_code
   end
+
+  # Two-factor authentication methods
+  def otp_provisioning_uri(issuer = "CryptoMessenger")
+    return nil unless otp_secret
+    
+    ROTP::TOTP.new(otp_secret, issuer: issuer).provisioning_uri(username)
+  end
+
+  def validate_otp(code)
+    Rails.logger.info "[OTP Validation] Start"
+    Rails.logger.info "[OTP Validation] OTP Secret present: #{otp_secret.present?}"
+    Rails.logger.info "[OTP Validation] Code: #{code.inspect}"
+    
+    return false unless otp_secret
+    return false if code.blank?
+    
+    totp = ROTP::TOTP.new(otp_secret)
+    clean_code = code.to_s.gsub(/\s+/, "")
+    Rails.logger.info "[OTP Validation] Clean code: #{clean_code}"
+    Rails.logger.info "[OTP Validation] Current TOTP: #{totp.now}"
+    Rails.logger.info "[OTP Validation] Current time: #{Time.now.to_i}"
+    
+    # Allow 30 seconds drift in either direction
+    result = totp.verify(clean_code, drift_behind: 30, drift_ahead: 30)
+    Rails.logger.info "[OTP Validation] Result: #{result.inspect}"
+    
+    result ? true : false
+  end
+
+  def validate_backup_code(code)
+    return false unless otp_enabled? && otp_backup_codes.present?
+    return false if code.blank?
+    
+    codes = JSON.parse(otp_backup_codes)
+    clean_code = code.to_s.gsub(/[^a-zA-Z0-9]/, '').downcase
+    
+    if codes.include?(clean_code)
+      codes.delete(clean_code)
+      update!(otp_backup_codes: codes.to_json)
+      true
+    else
+      false
+    end
+  end
+
+  def enable_otp!
+    self.otp_secret = ROTP::Base32.random
+    self.otp_backup_codes = generate_backup_codes.to_json
+    self.otp_enabled = false # Will be enabled after verification
+    save!
+  end
+
+  def disable_otp!
+    self.otp_secret = nil
+    self.otp_enabled = false
+    self.otp_backup_codes = nil
+    save!
+  end
+
+  def confirm_otp_setup!
+    update!(otp_enabled: true)
+  end
+
+  def regenerate_backup_codes!
+    return false unless otp_enabled?
+    
+    self.otp_backup_codes = generate_backup_codes.to_json
+    save!
+    JSON.parse(otp_backup_codes)
+  end
+
+  private
+
+  def generate_backup_codes
+    # Generate 10 backup codes (8 characters each)
+    10.times.map do
+      SecureRandom.alphanumeric(8).downcase
+    end
+  end
 end
