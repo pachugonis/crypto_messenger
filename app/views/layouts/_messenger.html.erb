@@ -109,6 +109,42 @@
 
   <!-- Main content -->
   <main class="flex-1 flex flex-col bg-dark-bg overflow-hidden">
+    <!-- Advertising ticker -->
+    <% advertisements = Advertisement.active.ordered %>
+    <% if advertisements.any? %>
+      <div class="bg-dark-surface border-b border-dark-border py-3" data-controller="ticker">
+        <div class="ticker">
+          <div class="ticker-track" data-ticker-target="track">
+            <% advertisements.each do |ad| %>
+              <% if ad.link.present? %>
+                <a href="<%= ad.link %>" target="_blank" class="ad-block">
+              <% else %>
+                <div class="ad-block">
+              <% end %>
+                
+                <% if ad.icon_type == 'image' && ad.image_url.present? %>
+                  <img src="<%= ad.image_url %>" alt="<%= ad.title %>" class="w-8 h-8 object-contain flex-shrink-0">
+                <% elsif ad.icon_type == 'emoji' && ad.content.present? %>
+                  <span class="text-2xl flex-shrink-0"><%= ad.content.split.first %></span>
+                <% else %>
+                  <svg class="w-8 h-8 <%= ad.icon_color_class %>" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                  </svg>
+                <% end %>
+                
+                <span class="font-medium text-lg"><%= ad.title %></span>
+              
+              <% if ad.link.present? %>
+                </a>
+              <% else %>
+                </div>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+    
     <div id="flash-messages">
       <% if flash[:notice] %>
         <div class="toast toast-success" data-controller="toast" data-toast-delay-value="3000">

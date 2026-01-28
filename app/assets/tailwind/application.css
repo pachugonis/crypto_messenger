@@ -443,3 +443,45 @@
 .turbo-progress-bar {
   @apply bg-primary h-1;
 }
+
+/* Ticker animation for ads */
+.ticker {
+  overflow: hidden;
+  white-space: nowrap;
+  position: relative;
+}
+
+.ticker-track {
+  display: inline-flex;
+  gap: 2rem;
+}
+
+.ticker-animate {
+  animation: ticker-scroll linear infinite;
+}
+
+@keyframes ticker-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* Ad block styles */
+.ad-block {
+  @apply inline-flex items-center gap-4 px-8 py-5 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-lg border border-primary/30 hover:border-primary/50 transition-all duration-300 cursor-pointer min-h-[80px];
+}
+
+.ad-block:hover {
+  @apply shadow-lg shadow-primary/20;
+}
+
+.ad-block svg {
+  @apply w-8 h-8 flex-shrink-0;
+}
+
+.ad-block img {
+  @apply max-h-16 w-auto object-contain;
+}

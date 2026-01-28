@@ -1,0 +1,5 @@
+<%= turbo_stream.replace "reactions-#{@message.id}" do %>
+  <div class="flex flex-wrap gap-1 mt-2" id="reactions-<%= @message.id %>">
+    <%= render "reactions/reactions_list", message: @message %>
+  </div>
+<% end %>

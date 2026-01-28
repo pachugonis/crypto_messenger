@@ -11,6 +11,7 @@ import ScrollController from "controllers/scroll_controller"
 import SearchController from "controllers/search_controller"
 import ShareController from "controllers/share_controller"
 import ThemeController from "controllers/theme_controller"
+import TickerController from "controllers/ticker_controller"
 import ToastController from "controllers/toast_controller"
 import UploadController from "controllers/upload_controller"
 
@@ -23,5 +24,6 @@ application.register("scroll", ScrollController)
 application.register("search", SearchController)
 application.register("share", ShareController)
 application.register("theme", ThemeController)
+application.register("ticker", TickerController)
 application.register("toast", ToastController)
 application.register("upload", UploadController)

@@ -1,0 +1,11 @@
+<div id="comment-form-<%= message.id %>">
+  <%= form_with model: [message.room, message, Comment.new], 
+                url: room_message_comments_path(message.room, message),
+                class: "flex gap-2" do |f| %>
+    <%= f.text_area :content, 
+        class: "input flex-1 min-h-[60px] text-sm", 
+        placeholder: "Написать комментарий...",
+        rows: 2 %>
+    <%= f.submit "Отправить", class: "btn btn-primary btn-sm self-end" %>
+  <% end %>
+</div>

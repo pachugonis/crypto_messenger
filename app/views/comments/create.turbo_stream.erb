@@ -1,0 +1,2 @@
+<%= turbo_stream.append "comments-list-#{@message.id}", partial: "comments/comment", locals: { comment: @comment } %>
+<%= turbo_stream.replace "comment-form-#{@message.id}", partial: "comments/form", locals: { message: @message } %>

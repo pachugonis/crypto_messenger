@@ -18,7 +18,10 @@ Rails.application.routes.draw do
 
   # Main application
   resources :rooms do
-    resources :messages, only: [ :create, :update, :destroy ]
+    resources :messages, only: [ :create, :update, :destroy ] do
+      resources :comments, only: [ :create, :destroy ]
+      resources :reactions, only: [ :create ]
+    end
     resources :participants, controller: "room_participants", only: [ :new, :create, :destroy, :update ] do
       collection do
         get :search_users
@@ -66,6 +69,7 @@ Rails.application.routes.draw do
       end
     end
     resources :rooms, only: [ :index, :show, :destroy ]
+    resources :advertisements
     get "statistics", to: "statistics#index"
   end
 

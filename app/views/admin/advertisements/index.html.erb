@@ -1,0 +1,70 @@
+<div class="p-6">
+  <div class="flex items-center justify-between mb-6">
+    <h1 class="text-2xl font-bold">Управление рекламой</h1>
+    <%= link_to "Создать рекламу", new_admin_advertisement_path, class: "btn btn-primary" %>
+  </div>
+
+  <% if @advertisements.empty? %>
+    <div class="card text-center py-12">
+      <p class="text-dark-text-muted mb-4">Рекламные блоки не созданы</p>
+      <%= link_to "Создать первый блок", new_admin_advertisement_path, class: "btn btn-primary" %>
+    </div>
+  <% else %>
+    <div class="card">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Позиция</th>
+            <th>Заголовок</th>
+            <th>Тип иконки</th>
+            <th>Статус</th>
+            <th>Действия</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @advertisements.each do |ad| %>
+            <tr>
+              <td class="font-semibold"><%= ad.position %></td>
+              <td>
+                <div class="font-medium"><%= ad.title %></div>
+                <% if ad.content.present? %>
+                  <div class="text-sm text-dark-text-muted truncate max-w-md">
+                    <%= ad.content %>
+                  </div>
+                <% end %>
+              </td>
+              <td>
+                <% if ad.icon_type == 'image' && ad.image_url.present? %>
+                  <img src="<%= ad.image_url %>" alt="Icon" class="w-8 h-8 object-contain">
+                <% elsif ad.icon_type == 'emoji' && ad.content.present? %>
+                  <span class="text-2xl"><%= ad.content.split.first %></span>
+                <% else %>
+                  <span class="text-sm text-dark-text-muted">SVG (<%= ad.icon_color || 'primary' %>)</span>
+                <% end %>
+              </td>
+              <td>
+                <% if ad.active %>
+                  <span class="badge badge-success">Активна</span>
+                <% else %>
+                  <span class="badge badge-error">Неактивна</span>
+                <% end %>
+              </td>
+              <td>
+                <div class="flex gap-2">
+                  <%= link_to edit_admin_advertisement_path(ad), class: "text-primary hover:underline text-sm" do %>
+                    Редактировать
+                  <% end %>
+                  <%= button_to admin_advertisement_path(ad), method: :delete, 
+                      data: { turbo_confirm: "Удалить этот рекламный блок?" }, 
+                      class: "text-error hover:underline text-sm" do %>
+                    Удалить
+                  <% end %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
+</div>

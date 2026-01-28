@@ -4,6 +4,8 @@ class Message < ApplicationRecord
   has_many :attachments, as: :attachable, dependent: :destroy
   has_many :message_reads, dependent: :destroy
   has_many :readers, through: :message_reads, source: :user
+  has_many :comments, dependent: :destroy
+  has_many :reactions, dependent: :destroy
   has_one_attached :image
 
   encrypts :content
@@ -68,6 +70,36 @@ class Message < ApplicationRecord
   # Get unread participants count
   def unread_count
     room.participants_count - read_count - 1 # -1 for sender
+  end
+  
+  # Check if comments are allowed (only in channels)
+  def comments_allowed?
+    room.channel?
+  end
+  
+  # Get comments count
+  def comments_count
+    comments.not_deleted.count
+  end
+  
+  # Check if reactions are allowed (groups and channels)
+  def reactions_allowed?
+    room.group? || room.channel?
+  end
+  
+  # Get grouped reactions
+  def grouped_reactions
+    reactions.group(:emoji).count
+  end
+  
+  # Check if user reacted with specific emoji
+  def user_reacted?(user, emoji)
+    reactions.exists?(user: user, emoji: emoji)
+  end
+  
+  # Get user's reaction to this message (if any)
+  def user_reaction(user)
+    reactions.find_by(user: user)
   end
 
   private

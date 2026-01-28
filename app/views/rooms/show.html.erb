@@ -167,18 +167,22 @@
         <% end %>
       </div>
     <% else %>
-      <div class="chat-input-container justify-center">
-        <p class="text-dark-text-muted text-sm"><%= t("common.access_denied") %></p>
-      </div>
+      <% unless @room.channel? %>
+        <div class="chat-input-container justify-center">
+          <p class="text-dark-text-muted text-sm"><%= t("common.access_denied") %></p>
+        </div>
+      <% end %>
     <% end %>
   <% else %>
     <!-- Join button for non-participants -->
-    <div class="chat-input-container justify-center">
-      <div class="text-center py-4">
-        <p class="text-dark-text-muted text-sm mb-4">
+    <div class="chat-input-container">
+      <div class="flex flex-col items-center justify-center gap-3 w-full max-w-md mx-auto">
+        <p class="text-dark-text-muted text-sm text-center">
           <%= @room.channel? ? t("rooms.show.join_channel_prompt") : t("rooms.show.join_group_prompt") %>
         </p>
-        <%= button_to t("rooms.show.join_button"), join_room_path(@room), method: :post, class: "btn btn-primary" %>
+        <%= form_with url: join_room_path(@room), method: :post do |f| %>
+          <%= f.submit t("rooms.show.join_button"), class: "btn btn-primary" %>
+        <% end %>
       </div>
     </div>
   <% end %>

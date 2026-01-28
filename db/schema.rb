@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_24_173614) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_27_141512) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -42,6 +42,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_24_173614) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "advertisements", force: :cascade do |t|
+    t.boolean "active", default: true, null: false
+    t.text "content"
+    t.datetime "created_at", null: false
+    t.string "icon_color"
+    t.string "icon_type", default: "svg"
+    t.string "image_url"
+    t.string "link"
+    t.integer "position", default: 0, null: false
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.index ["active"], name: "index_advertisements_on_active"
+    t.index ["position"], name: "index_advertisements_on_position"
+  end
+
   create_table "attachments", force: :cascade do |t|
     t.string "access_token"
     t.datetime "access_token_expires_at"
@@ -53,6 +68,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_24_173614) do
     t.index ["access_token"], name: "index_attachments_on_access_token", unique: true
     t.index ["attachable_type", "attachable_id"], name: "index_attachments_on_attachable"
     t.index ["user_id"], name: "index_attachments_on_user_id"
+  end
+
+  create_table "comments", force: :cascade do |t|
+    t.text "content", null: false
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at"
+    t.bigint "message_id", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["deleted_at"], name: "index_comments_on_deleted_at"
+    t.index ["message_id", "created_at"], name: "index_comments_on_message_id_and_created_at"
+    t.index ["message_id"], name: "index_comments_on_message_id"
+    t.index ["user_id"], name: "index_comments_on_user_id"
   end
 
   create_table "folders", force: :cascade do |t|
@@ -96,6 +124,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_24_173614) do
     t.index ["room_id"], name: "index_messages_on_room_id"
     t.index ["status"], name: "index_messages_on_status"
     t.index ["user_id"], name: "index_messages_on_user_id"
+  end
+
+  create_table "reactions", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "emoji", null: false
+    t.bigint "message_id", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["message_id", "emoji"], name: "index_reactions_on_message_id_and_emoji"
+    t.index ["message_id", "user_id"], name: "index_reactions_on_message_id_and_user_id", unique: true
+    t.index ["message_id"], name: "index_reactions_on_message_id"
+    t.index ["user_id"], name: "index_reactions_on_user_id"
   end
 
   create_table "room_participants", force: :cascade do |t|
@@ -157,12 +197,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_24_173614) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "attachments", "users"
+  add_foreign_key "comments", "messages"
+  add_foreign_key "comments", "users"
   add_foreign_key "folders", "folders", column: "parent_folder_id"
   add_foreign_key "folders", "users"
   add_foreign_key "message_reads", "messages"
   add_foreign_key "message_reads", "users"
   add_foreign_key "messages", "rooms"
   add_foreign_key "messages", "users"
+  add_foreign_key "reactions", "messages"
+  add_foreign_key "reactions", "users"
   add_foreign_key "room_participants", "rooms"
   add_foreign_key "room_participants", "users"
   add_foreign_key "sessions", "users"

@@ -3,6 +3,7 @@ class RoomsController < ApplicationController
   before_action :authorize_room_access, only: [ :show ]
   before_action :authorize_room_edit, only: [ :edit, :update, :destroy_image ]
   before_action :authorize_room_delete, only: [ :destroy ]
+  before_action :authorize_public_room_or_participant, only: [ :join ]
 
   def index
     @rooms = current_user.rooms.includes(:users, :messages).order(updated_at: :desc)
@@ -230,6 +231,13 @@ class RoomsController < ApplicationController
       unless participant && (participant.owner? || participant.admin?)
         redirect_to rooms_path, alert: t("common.access_denied")
       end
+    end
+  end
+  
+  def authorize_public_room_or_participant
+    # Allow access to join action only for public rooms
+    unless @room.visibility_public_room?
+      redirect_to rooms_path, alert: t("common.access_denied")
     end
   end
 

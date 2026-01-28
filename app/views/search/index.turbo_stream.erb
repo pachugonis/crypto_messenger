@@ -1,0 +1,117 @@
+<%= turbo_stream.replace "main-content" do %>
+  <turbo-frame id="main-content" class="flex-1 flex flex-col overflow-hidden">
+    <div class="flex-1 flex flex-col p-6 overflow-y-auto">
+      <h1 class="text-2xl font-bold mb-6"><%= t("common.search") %></h1>
+
+      <% if @query.present? %>
+        <% if @users.any? || @rooms.any? || @public_channels.any? %>
+          <!-- Users -->
+          <% if @users.any? %>
+          <div class="mb-6">
+            <h2 class="font-semibold text-dark-text-muted mb-3"><%= t("admin.users.title") %></h2>
+            <div class="space-y-2">
+              <% @users.each do |user| %>
+                <div class="card p-3 flex items-center justify-between">
+                  <div class="flex items-center gap-3">
+                    <div class="avatar avatar-sm">
+                      <% if user.avatar.attached? %>
+                        <%= image_tag user.avatar %>
+                      <% else %>
+                        <%= user.username[0].upcase %>
+                      <% end %>
+                    </div>
+                    <div>
+                      <div class="font-medium"><%= user.username %></div>
+                      <% if user.email_address.present? %>
+                        <div class="text-sm text-dark-text-muted"><%= user.email_address %></div>
+                      <% end %>
+                    </div>
+                  </div>
+                  <%= button_to rooms_path, 
+                      method: :post,
+                      params: { room: { room_type: :personal_chat }, user_id: user.id },
+                      class: "btn btn-sm btn-primary" do %>
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                    </svg>
+                    <%= t("rooms.index.new_chat") %>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+          <% end %>
+
+          <!-- User's rooms -->
+          <% if @rooms.any? %>
+          <div class="mb-6">
+            <h2 class="font-semibold text-dark-text-muted mb-3"><%= t("nav.chats") %></h2>
+            <div class="space-y-2">
+              <% @rooms.each do |room| %>
+                <%= link_to room_path(room), class: "card p-3 flex items-center gap-3 hover:border-primary transition-colors" do %>
+                  <div class="avatar avatar-sm">
+                    <% if room.channel? %>
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6"/>
+                      </svg>
+                    <% else %>
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857"/>
+                      </svg>
+                    <% end %>
+                  </div>
+                  <div>
+                    <div class="font-medium"><%= room.name %></div>
+                    <div class="text-sm text-dark-text-muted"><%= t("rooms.types.#{room.room_type}") %></div>
+                  </div>
+                <% end %>
+              <% end %>
+            </div>
+          </div>
+          <% end %>
+
+          <!-- Public channels -->
+          <% if @public_channels.any? %>
+          <div class="mb-6">
+            <h2 class="font-semibold text-dark-text-muted mb-3"><%= t("nav.channels") %> (<%= t("rooms.visibility.public") %>)</h2>
+            <div class="space-y-2">
+              <% @public_channels.each do |channel| %>
+                <div class="card p-3 flex items-center justify-between">
+                  <div class="flex items-center gap-3">
+                    <div class="avatar avatar-sm">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6"/>
+                      </svg>
+                    </div>
+                    <div>
+                      <div class="font-medium"><%= channel.name %></div>
+                      <div class="text-sm text-dark-text-muted"><%= channel.participants_count %> <%= t("participants.roles.member") %></div>
+                    </div>
+                  </div>
+                  <%= button_to room_participants_path(channel), method: :post, class: "btn btn-sm btn-primary" do %>
+                    <%= t("participants.add") %>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+          <% end %>
+        <% else %>
+          <div class="text-center py-12">
+            <svg class="w-16 h-16 mx-auto text-dark-text-muted opacity-50 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+            <p class="text-dark-text-muted"><%= t("common.no_results") %></p>
+          </div>
+        <% end %>
+      <% else %>
+        <div class="text-center py-12">
+          <svg class="w-16 h-16 mx-auto text-dark-text-muted opacity-50 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+          <p class="text-dark-text-muted"><%= t("rooms.index.search_placeholder") %></p>
+        </div>
+      <% end %>
+    </div>
+  </turbo-frame>
+<% end %>

@@ -1,0 +1,99 @@
+<div class="card">
+  <% if @advertisement.errors.any? %>
+    <div class="bg-error/20 border border-error/30 rounded-lg p-4 mb-4">
+      <h3 class="font-semibold text-error mb-2">Ошибки при сохранении:</h3>
+      <ul class="list-disc list-inside">
+        <% @advertisement.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="space-y-4">
+    <div>
+      <%= f.label :title, "Заголовок *", class: "label" %>
+      <%= f.text_field :title, class: "input", placeholder: "Быстрый обмен криптовалют" %>
+    </div>
+
+    <div>
+      <%= f.label :content, "Описание", class: "label" %>
+      <%= f.text_area :content, class: "input", rows: 3, placeholder: "Дополнительное описание (опционально)" %>
+      <p class="text-sm text-dark-text-muted mt-1">Будет показано только в списке администратора</p>
+    </div>
+
+    <div>
+      <%= f.label :position, "Позиция в списке *", class: "label" %>
+      <%= f.number_field :position, class: "input", placeholder: "0" %>
+      <p class="text-sm text-dark-text-muted mt-1">Меньшее число = выше в списке</p>
+    </div>
+
+    <div>
+      <%= f.label :icon_type, "Тип иконки", class: "label" %>
+      <%= f.select :icon_type, 
+          options_for_select([
+            ['SVG иконка', 'svg'],
+            ['Изображение (URL)', 'image'],
+            ['Emoji', 'emoji']
+          ], f.object.icon_type || 'svg'),
+          {},
+          class: "input" %>
+    </div>
+
+    <div id="icon-color-field" style="<%= 'display: none;' unless f.object.icon_type == 'svg' || f.object.icon_type.nil? %>">
+      <%= f.label :icon_color, "Цвет иконки", class: "label" %>
+      <%= f.select :icon_color,
+          options_for_select([
+            ['Синий (Primary)', 'primary'],
+            ['Фиолетовый (Secondary)', 'secondary'],
+            ['Голубой (Accent)', 'accent'],
+            ['Зелёный (Success)', 'success'],
+            ['Оранжевый (Warning)', 'warning'],
+            ['Красный (Error)', 'error']
+          ], f.object.icon_color || 'primary'),
+          {},
+          class: "input" %>
+    </div>
+
+    <div id="image-url-field" style="<%= 'display: none;' unless f.object.icon_type == 'image' %>">
+      <%= f.label :image_url, "URL изображения", class: "label" %>
+      <%= f.text_field :image_url, class: "input", placeholder: "https://example.com/icon.png" %>
+      <p class="text-sm text-dark-text-muted mt-1">Рекомендуемый размер: 64x64px</p>
+    </div>
+
+    <div>
+      <%= f.label :link, "Ссылка (опционально)", class: "label" %>
+      <%= f.text_field :link, class: "input", placeholder: "https://example.com" %>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <%= f.check_box :active, class: "w-4 h-4" %>
+      <%= f.label :active, "Активна", class: "text-sm font-medium" %>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const iconTypeSelect = document.querySelector('select[name="advertisement[icon_type]"]');
+    const iconColorField = document.getElementById('icon-color-field');
+    const imageUrlField = document.getElementById('image-url-field');
+    
+    if (iconTypeSelect) {
+      iconTypeSelect.addEventListener('change', function() {
+        const value = this.value;
+        
+        if (value === 'svg') {
+          iconColorField.style.display = 'block';
+          imageUrlField.style.display = 'none';
+        } else if (value === 'image') {
+          iconColorField.style.display = 'none';
+          imageUrlField.style.display = 'block';
+        } else {
+          iconColorField.style.display = 'none';
+          imageUrlField.style.display = 'none';
+        }
+      });
+    }
+  });
+</script>

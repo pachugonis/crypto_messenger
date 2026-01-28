@@ -1,0 +1,31 @@
+<div id="<%= dom_id(comment) %>" class="flex gap-2 p-2 bg-dark-surface rounded-lg <%= comment.deleted? ? 'opacity-50' : '' %>">
+  <div class="avatar avatar-sm flex-shrink-0">
+    <% if comment.user.avatar.attached? %>
+      <%= image_tag comment.user.avatar, alt: comment.user.username, class: "w-full h-full object-cover rounded-full" %>
+    <% else %>
+      <%= comment.user.username[0].upcase %>
+    <% end %>
+  </div>
+  
+  <div class="flex-1 min-w-0">
+    <div class="flex items-center gap-2 mb-1">
+      <span class="text-xs font-medium text-primary"><%= comment.user.username %></span>
+      <span class="text-xs text-dark-text-muted"><%= l(comment.created_at, format: :short) %></span>
+    </div>
+    
+    <% if comment.deleted? %>
+      <p class="text-xs text-dark-text-muted italic">Комментарий удалён</p>
+    <% else %>
+      <p class="text-sm whitespace-pre-wrap break-words"><%= comment.content %></p>
+      
+      <% if comment.user == current_user %>
+        <%= button_to room_message_comment_path(comment.message.room, comment.message, comment), 
+            method: :delete,
+            class: "text-xs text-error hover:underline mt-1",
+            data: { turbo_confirm: "Удалить комментарий?" } do %>
+          Удалить
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+</div>
