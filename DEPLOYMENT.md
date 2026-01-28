@@ -186,16 +186,16 @@ sudo nano /etc/nginx/sites-available/vorthex
 
 ```nginx
 upstream puma {
-  server unix:///var/www/vorthex/tmp/sockets/puma.sock;
+  server unix:///var/www/vorthex/crypto_messenger/tmp/sockets/puma.sock;
 }
 
 server {
   listen 80;
   server_name yourdomain.com www.yourdomain.com;
 
-  root /var/www/vorthex/public;
-  access_log /var/www/vorthex/log/nginx.access.log;
-  error_log /var/www/vorthex/log/nginx.error.log info;
+  root /var/www/vorthex/crypto_messenger/public;
+  access_log /var/www/vorthex/crypto_messenger/log/nginx.access.log;
+  error_log /var/www/vorthex/crypto_messenger/log/nginx.error.log info;
 
   location ^~ /assets/ {
     gzip_static on;
@@ -241,14 +241,14 @@ sudo systemctl restart nginx
 Создайте директорию для сокета:
 
 ```bash
-mkdir -p /var/www/vorthex/tmp/sockets
+mkdir -p /var/www/vorthex/crypto_messenger/tmp/sockets
 ```
 
 Отредактируйте `config/puma.rb` (если нужно):
 
 ```ruby
 # Добавьте или измените
-bind "unix:///var/www/vorthex/tmp/sockets/puma.sock"
+bind "unix:///var/www/vorthex/crypto_messenger/tmp/sockets/puma.sock"
 ```
 
 ## 5. Настройка systemd для автозапуска
@@ -269,8 +269,8 @@ After=network.target
 [Service]
 Type=simple
 User=your_username
-WorkingDirectory=/var/www/vorthex
-EnvironmentFile=/var/www/vorthex/.env.production
+WorkingDirectory=/var/www/vorthex/crypto_messenger
+EnvironmentFile=/var/www/vorthex/crypto_messenger/.env.production
 ExecStart=/home/your_username/.rbenv/shims/bundle exec puma -C config/puma.rb
 Restart=always
 
@@ -292,8 +292,8 @@ After=network.target
 [Service]
 Type=simple
 User=your_username
-WorkingDirectory=/var/www/vorthex
-EnvironmentFile=/var/www/vorthex/.env.production
+WorkingDirectory=/var/www/vorthex/crypto_messenger
+EnvironmentFile=/var/www/vorthex/crypto_messenger/.env.production
 ExecStart=/home/your_username/.rbenv/shims/bundle exec bin/jobs
 Restart=always
 
@@ -315,8 +315,8 @@ After=network.target
 [Service]
 Type=simple
 User=your_username
-WorkingDirectory=/var/www/vorthex
-EnvironmentFile=/var/www/vorthex/.env.production
+WorkingDirectory=/var/www/vorthex/crypto_messenger
+EnvironmentFile=/var/www/vorthex/crypto_messenger/.env.production
 ExecStart=/home/your_username/.rbenv/shims/bundle exec bin/thrust cable
 Restart=always
 
@@ -409,11 +409,11 @@ User.create!(
 sudo journalctl -u puma -f
 
 # Логи Nginx
-sudo tail -f /var/www/vorthex/log/nginx.access.log
-sudo tail -f /var/www/vorthex/log/nginx.error.log
+sudo tail -f /var/www/vorthex/crypto_messenger/log/nginx.access.log
+sudo tail -f /var/www/vorthex/crypto_messenger/log/nginx.error.log
 
 # Логи приложения
-tail -f /var/www/vorthex/log/production.log
+tail -f /var/www/vorthex/crypto_messenger/log/production.log
 ```
 
 ### 9.2 Перезапуск сервисов
@@ -432,7 +432,7 @@ sudo systemctl restart puma solid-queue solid-cable nginx
 ## 10. Обновление приложения
 
 ```bash
-cd /var/www/vorthex
+cd /var/www/vorthex/crypto_messenger
 
 # Получение последних изменений
 git pull origin main
@@ -469,7 +469,7 @@ crontab -e
 
 ```cron
 # Ежедневный бэкап в 3:00 AM
-0 3 * * * cd /var/www/vorthex && pg_dump -U vorthex vorthex_production > /var/backups/vorthex_$(date +\%Y\%m\%d).sql
+0 3 * * * cd /var/www/vorthex/crypto_messenger && pg_dump -U vorthex vorthex_production > /var/backups/vorthex_$(date +\%Y\%m\%d).sql
 ```
 
 Создайте директорию для бэкапов:
@@ -488,10 +488,10 @@ sudo chown $USER:$USER /var/backups
 sudo journalctl -u puma -n 50
 
 # Проверка прав доступа
-ls -la /var/www/vorthex/tmp/sockets/
+ls -la /var/www/vorthex/crypto_messenger/tmp/sockets/
 
 # Создание директории, если не существует
-mkdir -p /var/www/vorthex/tmp/sockets
+mkdir -p /var/www/vorthex/crypto_messenger/tmp/sockets
 ```
 
 ### Проблема: Ошибка подключения к базе данных
@@ -512,7 +512,7 @@ RAILS_ENV=production bin/rails assets:clobber
 RAILS_ENV=production bin/rails assets:precompile
 
 # Проверка прав доступа
-sudo chown -R $USER:$USER /var/www/vorthex/public
+sudo chown -R $USER:$USER /var/www/vorthex/crypto_messenger/public
 ```
 
 ## 13. Проверка работоспособности
@@ -545,7 +545,7 @@ free -h
 df -h
 
 # Очистка старых логов
-find /var/www/vorthex/log -name "*.log" -mtime +30 -delete
+find /var/www/vorthex/crypto_messenger/log -name "*.log" -mtime +30 -delete
 ```
 
 ---
