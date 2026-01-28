@@ -90,6 +90,7 @@ production:
     database: vorthex_production
     username: vorthex
     password: <%= ENV["VORTHEX_DATABASE_PASSWORD"] %>
+    host: 127.0.0.1
   cache:
     <<: *primary_production
     database: vorthex_production_cache
