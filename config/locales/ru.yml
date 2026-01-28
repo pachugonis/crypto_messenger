@@ -132,7 +132,7 @@ ru:
 
   # Application strings
   app:
-    name: "Crypto Messenger"
+    name: "Vorthex"
     tagline: "Защищённый мессенджер"
 
   # Navigation

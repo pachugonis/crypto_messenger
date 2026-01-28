@@ -78,7 +78,7 @@ class User < ApplicationRecord
   end
 
   # Two-factor authentication methods
-  def otp_provisioning_uri(issuer = "CryptoMessenger")
+  def otp_provisioning_uri(issuer = "Vorthex")
     return nil unless otp_secret
     
     ROTP::TOTP.new(otp_secret, issuer: issuer).provisioning_uri(username)

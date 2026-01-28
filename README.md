@@ -1,4 +1,4 @@
-# Crypto Messenger
+# Vorthex
 
 A secure, real-time messaging application built with Ruby on Rails 8.1, featuring end-to-end encrypted communications, file sharing, and folder organization.
 

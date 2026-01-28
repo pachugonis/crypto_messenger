@@ -1,4 +1,4 @@
-# Инструкция по развертыванию Crypto Messenger на VPS Ubuntu 24
+# Инструкция по развертыванию Vorthex на VPS Ubuntu 24
 
 ## Требования
 
@@ -66,13 +66,13 @@ gem install bundler
 sudo -u postgres psql
 
 # Создать пользователя
-CREATE USER crypto_messenger WITH PASSWORD 'your_secure_password';
+CREATE USER vorthex WITH PASSWORD 'your_secure_password';
 
 # Создать базу данных
-CREATE DATABASE crypto_messenger_production OWNER crypto_messenger;
+CREATE DATABASE vorthex_production OWNER vorthex;
 
 # Выдать права
-GRANT ALL PRIVILEGES ON DATABASE crypto_messenger_production TO crypto_messenger;
+GRANT ALL PRIVILEGES ON DATABASE vorthex_production TO vorthex;
 
 # Выход
 \q
@@ -84,9 +84,9 @@ GRANT ALL PRIVILEGES ON DATABASE crypto_messenger_production TO crypto_messenger
 
 ```bash
 cd /var/www
-sudo mkdir -p crypto_messenger
-sudo chown $USER:$USER crypto_messenger
-cd crypto_messenger
+sudo mkdir -p vorthex
+sudo chown $USER:$USER vorthex
+cd vorthex
 
 git clone https://github.com/pachugonis/crypto_messenger.git .
 ```
@@ -109,7 +109,7 @@ nano .env.production
 
 ```env
 RAILS_ENV=production
-DATABASE_URL=postgresql://crypto_messenger:your_secure_password@localhost/crypto_messenger_production
+DATABASE_URL=postgresql://vorthex:your_secure_password@localhost/vorthex_production
 REDIS_URL=redis://localhost:6379/0
 
 # Сгенерируйте секретные ключи командой: bin/rails secret
@@ -177,23 +177,23 @@ sudo apt install -y nginx
 Создайте конфигурацию для приложения:
 
 ```bash
-sudo nano /etc/nginx/sites-available/crypto_messenger
+sudo nano /etc/nginx/sites-available/vorthex
 ```
 
 Добавьте следующую конфигурацию:
 
 ```nginx
 upstream puma {
-  server unix:///var/www/crypto_messenger/tmp/sockets/puma.sock;
+  server unix:///var/www/vorthex/tmp/sockets/puma.sock;
 }
 
 server {
   listen 80;
   server_name yourdomain.com www.yourdomain.com;
 
-  root /var/www/crypto_messenger/public;
-  access_log /var/www/crypto_messenger/log/nginx.access.log;
-  error_log /var/www/crypto_messenger/log/nginx.error.log info;
+  root /var/www/vorthex/public;
+  access_log /var/www/vorthex/log/nginx.access.log;
+  error_log /var/www/vorthex/log/nginx.error.log info;
 
   location ^~ /assets/ {
     gzip_static on;
@@ -229,7 +229,7 @@ server {
 ### 4.3 Активация конфигурации
 
 ```bash
-sudo ln -s /etc/nginx/sites-available/crypto_messenger /etc/nginx/sites-enabled/
+sudo ln -s /etc/nginx/sites-available/vorthex /etc/nginx/sites-enabled/
 sudo nginx -t
 sudo systemctl restart nginx
 ```
@@ -239,14 +239,14 @@ sudo systemctl restart nginx
 Создайте директорию для сокета:
 
 ```bash
-mkdir -p /var/www/crypto_messenger/tmp/sockets
+mkdir -p /var/www/vorthex/tmp/sockets
 ```
 
 Отредактируйте `config/puma.rb` (если нужно):
 
 ```ruby
 # Добавьте или измените
-bind "unix:///var/www/crypto_messenger/tmp/sockets/puma.sock"
+bind "unix:///var/www/vorthex/tmp/sockets/puma.sock"
 ```
 
 ## 5. Настройка systemd для автозапуска
@@ -261,14 +261,14 @@ sudo nano /etc/systemd/system/puma.service
 
 ```ini
 [Unit]
-Description=Puma HTTP Server for Crypto Messenger
+Description=Puma HTTP Server for Vorthex
 After=network.target
 
 [Service]
 Type=simple
 User=your_username
-WorkingDirectory=/var/www/crypto_messenger
-EnvironmentFile=/var/www/crypto_messenger/.env.production
+WorkingDirectory=/var/www/vorthex
+EnvironmentFile=/var/www/vorthex/.env.production
 ExecStart=/home/your_username/.rbenv/shims/bundle exec puma -C config/puma.rb
 Restart=always
 
@@ -284,14 +284,14 @@ sudo nano /etc/systemd/system/solid-queue.service
 
 ```ini
 [Unit]
-Description=Solid Queue Worker for Crypto Messenger
+Description=Solid Queue Worker for Vorthex
 After=network.target
 
 [Service]
 Type=simple
 User=your_username
-WorkingDirectory=/var/www/crypto_messenger
-EnvironmentFile=/var/www/crypto_messenger/.env.production
+WorkingDirectory=/var/www/vorthex
+EnvironmentFile=/var/www/vorthex/.env.production
 ExecStart=/home/your_username/.rbenv/shims/bundle exec bin/jobs
 Restart=always
 
@@ -307,14 +307,14 @@ sudo nano /etc/systemd/system/solid-cable.service
 
 ```ini
 [Unit]
-Description=Solid Cable Server for Crypto Messenger
+Description=Solid Cable Server for Vorthex
 After=network.target
 
 [Service]
 Type=simple
 User=your_username
-WorkingDirectory=/var/www/crypto_messenger
-EnvironmentFile=/var/www/crypto_messenger/.env.production
+WorkingDirectory=/var/www/vorthex
+EnvironmentFile=/var/www/vorthex/.env.production
 ExecStart=/home/your_username/.rbenv/shims/bundle exec bin/thrust cable
 Restart=always
 
@@ -382,7 +382,7 @@ sudo ufw status
 ## 8. Создание первого администратора
 
 ```bash
-cd /var/www/crypto_messenger
+cd /var/www/vorthex
 RAILS_ENV=production bin/rails console
 ```
 
@@ -407,11 +407,11 @@ User.create!(
 sudo journalctl -u puma -f
 
 # Логи Nginx
-sudo tail -f /var/www/crypto_messenger/log/nginx.access.log
-sudo tail -f /var/www/crypto_messenger/log/nginx.error.log
+sudo tail -f /var/www/vorthex/log/nginx.access.log
+sudo tail -f /var/www/vorthex/log/nginx.error.log
 
 # Логи приложения
-tail -f /var/www/crypto_messenger/log/production.log
+tail -f /var/www/vorthex/log/production.log
 ```
 
 ### 9.2 Перезапуск сервисов
@@ -430,7 +430,7 @@ sudo systemctl restart puma solid-queue solid-cable nginx
 ## 10. Обновление приложения
 
 ```bash
-cd /var/www/crypto_messenger
+cd /var/www/vorthex
 
 # Получение последних изменений
 git pull origin main
@@ -454,7 +454,7 @@ sudo systemctl restart puma solid-queue solid-cable
 
 ```bash
 # Ручной бэкап
-pg_dump -U crypto_messenger crypto_messenger_production > backup_$(date +%Y%m%d_%H%M%S).sql
+pg_dump -U vorthex vorthex_production > backup_$(date +%Y%m%d_%H%M%S).sql
 ```
 
 ### 11.2 Автоматический бэкап (cron)
@@ -467,7 +467,7 @@ crontab -e
 
 ```cron
 # Ежедневный бэкап в 3:00 AM
-0 3 * * * cd /var/www/crypto_messenger && pg_dump -U crypto_messenger crypto_messenger_production > /var/backups/crypto_messenger_$(date +\%Y\%m\%d).sql
+0 3 * * * cd /var/www/vorthex && pg_dump -U vorthex vorthex_production > /var/backups/vorthex_$(date +\%Y\%m\%d).sql
 ```
 
 Создайте директорию для бэкапов:
@@ -486,10 +486,10 @@ sudo chown $USER:$USER /var/backups
 sudo journalctl -u puma -n 50
 
 # Проверка прав доступа
-ls -la /var/www/crypto_messenger/tmp/sockets/
+ls -la /var/www/vorthex/tmp/sockets/
 
 # Создание директории, если не существует
-mkdir -p /var/www/crypto_messenger/tmp/sockets
+mkdir -p /var/www/vorthex/tmp/sockets
 ```
 
 ### Проблема: Ошибка подключения к базе данных
@@ -499,7 +499,7 @@ mkdir -p /var/www/crypto_messenger/tmp/sockets
 sudo systemctl status postgresql
 
 # Проверка подключения
-psql -U crypto_messenger -d crypto_messenger_production -h localhost
+psql -U vorthex -d vorthex_production -h localhost
 ```
 
 ### Проблема: Asset файлы не загружаются
@@ -510,7 +510,7 @@ RAILS_ENV=production bin/rails assets:clobber
 RAILS_ENV=production bin/rails assets:precompile
 
 # Проверка прав доступа
-sudo chown -R $USER:$USER /var/www/crypto_messenger/public
+sudo chown -R $USER:$USER /var/www/vorthex/public
 ```
 
 ## 13. Проверка работоспособности
@@ -543,7 +543,7 @@ free -h
 df -h
 
 # Очистка старых логов
-find /var/www/crypto_messenger/log -name "*.log" -mtime +30 -delete
+find /var/www/vorthex/log -name "*.log" -mtime +30 -delete
 ```
 
 ---

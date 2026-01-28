@@ -30,7 +30,7 @@
 en:
   # Application strings
   app:
-    name: "Crypto Messenger"
+    name: "Vorthex"
     tagline: "Secure Messenger"
 
   # Navigation
