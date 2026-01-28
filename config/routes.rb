@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   resource :session
   resources :passwords, param: :token
   resource :registration, only: [ :new, :create ]
+  get "recovery_code", to: "registrations#show_recovery_code", as: :show_recovery_code
   resource :profile, only: [ :show, :edit, :update ] do
     delete :destroy_avatar, on: :member
   end

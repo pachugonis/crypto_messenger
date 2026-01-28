@@ -9,12 +9,16 @@ class RegistrationsController < ApplicationController
     @user = User.new(user_params)
 
     if @user.save
-      @recovery_code = @user.recovery_code
+      recovery_code = @user.recovery_code
       start_new_session_for @user
-      render :show_recovery_code
+      redirect_to show_recovery_code_path(recovery_code: recovery_code), status: :see_other
     else
       render :new, status: :unprocessable_entity
     end
+  end
+
+  def show_recovery_code
+    @recovery_code = params[:recovery_code]
   end
 
   private
