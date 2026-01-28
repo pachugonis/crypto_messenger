@@ -2,6 +2,8 @@
 
 Этот гайд описывает развертывание Vorthex с использованием Docker и Docker Compose.
 
+> **Примечание:** Репозиторий называется `crypto_messenger`, но приложение называется **Vorthex**. Работайте из папки `crypto_messenger` после клонирования.
+
 ## Требования
 
 - Docker Engine 20.10 или новее
@@ -14,8 +16,8 @@
 ### 1. Клонирование репозитория
 
 ```bash
-git clone https://github.com/pachugonis/crypto_messenger.git vorthex
-cd vorthex
+git clone https://github.com/pachugonis/crypto_messenger.git
+cd crypto_messenger
 ```
 
 ### 2. Настройка переменных окружения

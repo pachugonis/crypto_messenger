@@ -2,6 +2,8 @@
 
 Kamal - это официальный инструмент развертывания для Rails 8, который автоматизирует деплой приложения на любой сервер с Docker.
 
+> **Примечание:** Репозиторий называется `crypto_messenger`, но приложение называется **Vorthex**. Работайте из папки `crypto_messenger` после клонирования.
+
 ## Требования
 
 ### На локальной машине:
@@ -51,8 +53,8 @@ docker ps
 ### 1. Клонирование репозитория
 
 ```bash
-git clone https://github.com/pachugonis/crypto_messenger.git vorthex
-cd vorthex
+git clone https://github.com/pachugonis/crypto_messenger.git
+cd crypto_messenger
 ```
 
 ### 2. Установка Kamal
