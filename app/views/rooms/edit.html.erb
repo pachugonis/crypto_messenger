@@ -1,7 +1,7 @@
 <turbo-frame id="modal">
   <div class="modal-backdrop" data-controller="modal" data-action="click->modal#closeOnBackdrop keydown@window->modal#closeOnEscape">
-    <div class="modal max-h-[90vh] overflow-y-auto" data-modal-target="content">
-      <div class="flex items-center justify-between mb-6">
+    <div class="modal flex flex-col max-h-[90vh]" data-modal-target="content">
+      <div class="flex items-center justify-between mb-6 flex-shrink-0">
         <h2 class="text-xl font-bold"><%= t("rooms.edit.title") %></h2>
         <%= link_to @room, class: "btn-icon btn-ghost", data: { turbo_frame: "modal" } do %>
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -10,7 +10,8 @@
         <% end %>
       </div>
 
-      <%= form_with model: @room, class: "space-y-4", multipart: true do |f| %>
+      <div class="overflow-y-auto flex-1 -mx-6 px-6">
+        <%= form_with model: @room, class: "space-y-4", multipart: true do |f| %>
         <% if @room.errors.any? %>
           <div class="p-4 rounded-lg bg-error/20 text-error border border-error/30 text-sm">
             <ul class="list-disc list-inside space-y-1">
@@ -122,6 +123,7 @@
           <%= f.submit t("common.save"), class: "btn btn-primary flex-1" %>
         </div>
       <% end %>
+      </div>
     </div>
   </div>
   
