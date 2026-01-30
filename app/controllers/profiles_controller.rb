@@ -25,23 +25,7 @@ class ProfilesController < ApplicationController
 
     # Handle regular file upload if no cropped version
     if params[:user] && params[:user][:avatar].present?
-      file = params[:user][:avatar]
-      # Process the image with ImageProcessing
-      require 'mini_magick'
-      
-      image = MiniMagick::Image.read(file.tempfile)
-      # Crop to square from center
-      size = [image.width, image.height].min
-      image.crop "#{size}x#{size}+#{(image.width - size) / 2}+#{(image.height - size) / 2}"
-      # Resize to 100x100
-      image.resize "100x100"
-      
-      # Attach processed image
-      @user.avatar.attach(
-        io: File.open(image.path),
-        filename: "avatar_#{@user.id}.jpg",
-        content_type: "image/jpeg"
-      )
+      @user.avatar.attach(params[:user][:avatar])
       respond_to do |format|
         format.turbo_stream
         format.html { redirect_to profile_path, notice: t("profile.messages.avatar_updated") }
