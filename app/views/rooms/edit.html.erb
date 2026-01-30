@@ -1,6 +1,6 @@
 <turbo-frame id="modal">
   <div class="modal-backdrop" data-controller="modal" data-action="click->modal#closeOnBackdrop keydown@window->modal#closeOnEscape">
-    <div class="modal" data-modal-target="content">
+    <div class="modal max-h-[90vh] overflow-y-auto" data-modal-target="content">
       <div class="flex items-center justify-between mb-6">
         <h2 class="text-xl font-bold"><%= t("rooms.edit.title") %></h2>
         <%= link_to @room, class: "btn-icon btn-ghost", data: { turbo_frame: "modal" } do %>
