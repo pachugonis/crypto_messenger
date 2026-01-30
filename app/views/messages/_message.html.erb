@@ -1,5 +1,4 @@
-<%= turbo_frame_tag dom_id(message) do %>
-  <div class="message <%= message.user == current_user ? 'message-own' : 'message-other' %>" id="<%= dom_id(message) %>">
+<div class="message <%= message.user == current_user ? 'message-own' : 'message-other' %>" id="<%= dom_id(message) %>">
     <% unless message.user == current_user %>
       <div class="avatar avatar-sm flex-shrink-0 mt-auto">
         <% if message.user.avatar.attached? %>
@@ -93,4 +92,4 @@
       <% end %>
     </div>
   </div>
-<% end %>
+</div>
