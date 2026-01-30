@@ -1,16 +1,16 @@
 <turbo-frame id="modal">
   <div class="modal-backdrop" data-controller="modal" data-action="click->modal#closeOnBackdrop keydown@window->modal#closeOnEscape">
-    <div class="modal flex flex-col max-h-[90vh]" data-modal-target="content">
-      <div class="flex items-center justify-between mb-6 flex-shrink-0">
-        <h2 class="text-xl font-bold"><%= t("rooms.edit.title") %></h2>
-        <%= link_to @room, class: "btn-icon btn-ghost", data: { turbo_frame: "modal" } do %>
+    <div class="modal-content" data-modal-target="content">
+      <div class="modal-header">
+        <h2 class="modal-title"><%= t("rooms.edit.title") %></h2>
+        <%= link_to @room, class: "modal-close", data: { turbo_frame: "modal" } do %>
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
           </svg>
         <% end %>
       </div>
 
-      <div class="overflow-y-auto flex-1 -mx-6 px-6">
+      <div class="modal-body">
         <%= form_with model: @room, class: "space-y-4", multipart: true do |f| %>
         <% if @room.errors.any? %>
           <div class="p-4 rounded-lg bg-error/20 text-error border border-error/30 text-sm">
@@ -117,12 +117,12 @@
             </div>
           <% end %>
         </div>
-
-        <div class="flex gap-3 pt-4">
-          <%= link_to t("common.cancel"), @room, class: "btn btn-secondary flex-1", data: { turbo_frame: "modal" } %>
-          <%= f.submit t("common.save"), class: "btn btn-primary flex-1" %>
-        </div>
       <% end %>
+      </div>
+
+      <div class="modal-footer">
+        <%= link_to t("common.cancel"), @room, class: "btn btn-secondary", data: { turbo_frame: "modal" } %>
+        <%= button_tag t("common.save"), form: @room.persisted? ? "edit_room_#{@room.id}" : "new_room", class: "btn btn-primary" %>
       </div>
     </div>
   </div>
